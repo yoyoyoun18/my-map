@@ -150,13 +150,14 @@ function Map() {
     const center = map.getCenter();
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
-    const radius =
-      getDistanceFromLatLonInKm(
-        sw.getLat(),
-        sw.getLng(),
-        ne.getLat(),
-        ne.getLng()
-      ) / 2;
+    // const radius =
+    //   getDistanceFromLatLonInKm(
+    //     sw.getLat(),
+    //     sw.getLng(),
+    //     ne.getLat(),
+    //     ne.getLng()
+    //   ) / 2;
+    const radius = 10000;
     const searchOption = {
       location: center,
       radius: radius,
@@ -176,13 +177,21 @@ function Map() {
 
     const processResults = (places, status, pagination) => {
       if (status === window.kakao.maps.services.Status.OK) {
-        accumulatedResults = accumulatedResults.concat(
-          places.filter((place) =>
-            map
-              .getBounds()
-              .contain(new window.kakao.maps.LatLng(place.y, place.x))
-          )
+        const filteredPlaces = places.filter((place) =>
+          map
+            .getBounds()
+            .contain(new window.kakao.maps.LatLng(place.y, place.x))
         );
+
+        // 필터링된 결과를 accumulatedResults에 추가합니다.
+        accumulatedResults = accumulatedResults.concat(filteredPlaces);
+
+        // 필터링된 결과가 없으면 전체 places를 accumulatedResults에 추가합니다.
+        if (filteredPlaces.length === 0) {
+          places.forEach((place) => {
+            accumulatedResults.push(place);
+          });
+        }
         if (pagination.hasNextPage) {
           fetchResults(processResults, pagination);
         } else {
@@ -225,6 +234,11 @@ function Map() {
     });
 
     setMarkers(newMarkers); // 여기서 마커 배열을 업데이트합니다.
+    // console.log(places[0].x);
+    if (places.length > 0) {
+      const newCenter = new window.kakao.maps.LatLng(places[0].y, places[0].x);
+      map.setCenter(newCenter);
+    }
   };
 
   // 현재 위치에서 재검색 버튼 클릭 시 실행되는 함수
