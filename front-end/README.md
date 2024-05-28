@@ -1,70 +1,75 @@
-# Getting Started with Create React App
+### My Map (toy project)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+kakao api를 이용하여 지도 검색 서비스를 구현
 
-In the project directory, you can run:
+### commit 메세지 규칙
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+// Header, Body, Footer는 빈 행으로 구분한다.
+타입(스코프): 주제(제목) // Header(헤더)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+본문 // Body(바디)
 
-### `npm test`
+바닥글 // Footer
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| 타입이름 | 내용                                                  |
+| -------- | ----------------------------------------------------- |
+| feat     | 새로운 기능에 대한 커밋                               |
+| fix      | 버그 수정에 대한 커밋                                 |
+| build    | 빌드 관련 파일 수정 / 모듈 설치 또는 삭제에 대한 커밋 |
+| chore    | 그 외 자잘한 수정에 대한 커밋                         |
+| ci       | ci 관련 설정 수정에 대한 커밋                         |
+| docs     | 문서 수정에 대한 커밋                                 |
+| style    | 코드 스타일 혹은 포맷 등에 관한 커밋                  |
+| refactor | 코드 리팩토링에 대한 커밋                             |
+| test     | 테스트 코드 수정에 대한 커밋                          |
+| perf     | 성능 개선에 대한 커밋                                 |
 
-### `npm run build`
+5-20 커밋부터 적용
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 프로젝트 목표
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Javascript 비동기처리 구현 (api 요청부)
+- express, mongoDB로 백엔드 구성
+- ssr, csr을 필요에 따라 적용해보기
+- swr, react-query등을 통해 데이터 관리 최적화
+- redux toolkit을 이용한 전역 변수 상태관리
+- docker를 이용해보기
+- tailwind를 이용해 css 없이 반응형 웹 구현해보기
+- 대중적인 라이브러리 소스 사용해보기(kakao map sdk, kakao mobility)
 
-### `npm run eject`
+### 실행
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+node.js (18.20.2 이상)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+npm install
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 프로젝트 기능
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- kakao map api를 이용하여 장소 검색 서비스를 구축.
+- OAuth를 이용하여 로그인 시스템을 구현하고 내 집 내가 자주가는 곳 등을 즐겨찾기 할 수 있는 기능 탑재.
+- 다양한 React.js 의 hook 들과 javascript의 비동기 처리에 대한 이해도를 높이는 것.
+- kakao mobility를 이용하여 경로 검색 구현.
+- git의 최대한 많은 기능 사용해보기(branch, merge 등)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 느낀점
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 개선사항, 아쉬운 점
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
