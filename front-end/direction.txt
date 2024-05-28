@@ -1,0 +1,4 @@
+1. kakao map sdk 를 이용해 구현했던 지도 컴포넌트 가져오기
+2. redux toolkit으로 전역 변수 관리해서 지도 컴포넌트와 타 컴포넌트들 호환시키기
+3. 가짜 로그인 상태 만들기
+4. searchResult의 요소들 클릭시 Detail 페이지 나오게하기 + api로 json 받아온 것 띄우기
