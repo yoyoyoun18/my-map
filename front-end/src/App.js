@@ -5,8 +5,10 @@ import Map from "./components/Map";
 import MyInfo from "./components/MyInfo";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResult";
+import { useSelector } from "react-redux";
 
 function App() {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
     <div className="flex flex-row h-screen">
       <div
@@ -15,7 +17,7 @@ function App() {
       >
         <Header />
         <SearchBar />
-        <MyInfo />
+        {isLoggedIn && <MyInfo />}
         <SearchResults />
       </div>
       <Detail />
