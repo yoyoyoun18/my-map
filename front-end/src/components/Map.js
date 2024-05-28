@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 function Map() {
+  const searchWord = useSelector((state) => state.search.searchWord);
   const locations = ["서울", "부산", "대구", "인천", "광주"];
   const [map, setMap] = useState(null);
   const [keyword, setKeyword] = useState();
@@ -99,11 +101,11 @@ function Map() {
 
   // 중심 좌표나 검색어 변경 시 검색 실행
   useEffect(() => {
-    if (map && keyword) {
+    if (map && searchWord) {
       handleSearch();
       setMarkers([]);
     }
-  }, [keyword, map]);
+  }, [searchWord, map]);
 
   // 데이터 변경 감지
   //   useEffect(() => {
@@ -134,7 +136,7 @@ function Map() {
   }
 
   const handleSearch = () => {
-    if (!map || !keyword) return;
+    if (!map || !searchWord) return;
 
     setLoading(true);
     markers.forEach((marker) => marker.setMap(null));
@@ -164,7 +166,7 @@ function Map() {
       if (pagination) {
         pagination.nextPage(callback); // 다음 페이지 요청
       } else {
-        ps.keywordSearch(keyword, callback, searchOption); // 첫 페이지 요청
+        ps.keywordSearch(searchWord, callback, searchOption); // 첫 페이지 요청
       }
     };
 
