@@ -50,15 +50,15 @@ function Map() {
     setMap(createdMap);
 
     // 타일이 로드된 후에 실행될 이벤트 리스너 추가
-    window.kakao.maps.event.addListener(createdMap, "tilesloaded", () => {
-      displayPlaces([
-        {
-          y: lat,
-          x: lng,
-          place_name: "내 위치",
-        },
-      ]);
-    });
+    // window.kakao.maps.event.addListener(createdMap, "tilesloaded", () => {
+    //   displayPlaces([
+    //     {
+    //       y: lat,
+    //       x: lng,
+    //       place_name: "내 위치",
+    //     },
+    //   ]);
+    // });
   };
 
   //   useEffect(() => {
@@ -88,34 +88,33 @@ function Map() {
     }
   }, [map]);
 
-  useEffect(() => {
-    if (map) {
-      displayPlaces([
-        {
-          y: map.getCenter().getLat(),
-          x: map.getCenter().getLng(),
-          place_name: "내 위치",
-        },
-      ]);
-    }
-  }, [map]);
+  //   useEffect(() => {
+  //     if (map) {
+  //       displayPlaces([
+  //         {
+  //           y: map.getCenter().getLat(),
+  //           x: map.getCenter().getLng(),
+  //           place_name: "내 위치",
+  //         },
+  //       ]);
+  //     }
+  //   }, [map]);
 
   // 중심 좌표나 검색어 변경 시 검색 실행
   useEffect(() => {
-    if (map && searchWord) {
+    if (map) {
+      markers.forEach((marker) => marker.setMap(null));
       handleSearch();
       setMarkers([]);
     }
-  }, [searchWord, searchCount, map]);
+  }, [searchWord, searchCount]);
 
-  // 데이터 변경 감지
-  //   useEffect(() => {
-  //     if (data) {
-  //       handleDataUpdate(data);
-  //     }
-  //   }, [data]);
-
-  // 검색 실행
+  const markerTest = () => {
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+    displayPlaces([]);
+    console.log(markers);
+  };
 
   function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var R = 6371; // 지구의 반경 (km)
@@ -140,8 +139,9 @@ function Map() {
     if (!map || !searchWord) return;
 
     setLoading(true);
+    // 기존 마커를 지도에서 제거
     markers.forEach((marker) => marker.setMap(null));
-    setMarkers([]);
+    setMarkers([]); // 마커 배열을 비웁니다.
 
     const bounds = map.getBounds();
     const center = map.getCenter();
@@ -160,12 +160,12 @@ function Map() {
     };
 
     const ps = new window.kakao.maps.services.Places();
-    let accumulatedResults = []; // 임시 배열로 누적된 결과를 저장합니다.
+    let accumulatedResults = [];
 
-    // 재귀적으로 검색 결과를 누적하는 함수
     const fetchResults = (callback, pagination = null) => {
       if (pagination) {
         pagination.nextPage(callback); // 다음 페이지 요청
+        console.log("pagination: " + JSON.stringify(pagination));
       } else {
         ps.keywordSearch(searchWord, callback, searchOption); // 첫 페이지 요청
       }
@@ -183,9 +183,8 @@ function Map() {
         if (pagination.hasNextPage) {
           fetchResults(processResults, pagination);
         } else {
-          setData(accumulatedResults); // 모든 페이지의 데이터 로드가 완료되면 상태 업데이트
+          setData(accumulatedResults);
           displayPlaces(accumulatedResults);
-          console.log(accumulatedResults);
           setLoading(false);
         }
       } else {
@@ -199,14 +198,14 @@ function Map() {
 
   // 장소를 표시하는 함수
   const displayPlaces = (places) => {
-    console.log("Places data:", places); // 데이터 구조 확인을 위한 로그
+    console.log("Places data:", places);
+
     const newMarkers = places.map((place) => {
-      console.log("Creating marker for:", place.y, place.x); // 마커 생성 정보 로그
+      console.log("Creating marker for:", place.y, place.x);
       const marker = new window.kakao.maps.Marker({
         map: map,
-        position: new window.kakao.maps.LatLng(place.y, place.x), // 위치 생성 시 위도, 경도 순서 확인
+        position: new window.kakao.maps.LatLng(place.y, place.x),
       });
-
       const infowindow = new window.kakao.maps.InfoWindow({
         content: `<div style="padding:5px;font-size:12px;">${place.place_name}</div>`,
       });
@@ -222,7 +221,7 @@ function Map() {
       return marker;
     });
 
-    setMarkers(newMarkers);
+    setMarkers(newMarkers); // 여기서 마커 배열을 업데이트합니다.
   };
 
   // 현재 위치에서 재검색 버튼 클릭 시 실행되는 함수
