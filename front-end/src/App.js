@@ -1,4 +1,4 @@
-import "./App.css";
+import React, { useEffect, useState } from "react";
 import Detail from "./components/Detail";
 import Header from "./components/Header";
 import Map from "./components/Map";
