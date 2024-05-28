@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchWord } from "../features/search/searchSlice";
+import {
+  setSearchWord,
+  incrementSearchCount,
+  resetSearchCount,
+} from "../features/search/searchSlice";
 
 function SearchBar() {
   const dispatch = useDispatch();
@@ -10,6 +14,7 @@ function SearchBar() {
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       dispatch(setSearchWord(inputValue)); // 엔터 키를 눌렀을 때만 Redux 스토어의 상태를 업데이트합니다.
+      dispatch(incrementSearchCount()); // searchCount를 1씩 증가시킵니다.
       event.preventDefault(); // 엔터 키의 기본 이벤트를 방지합니다.
     }
   };

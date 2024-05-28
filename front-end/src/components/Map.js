@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 function Map() {
   const searchWord = useSelector((state) => state.search.searchWord);
+  const searchCount = useSelector((state) => state.search.searchCount);
   const locations = ["서울", "부산", "대구", "인천", "광주"];
   const [map, setMap] = useState(null);
   const [keyword, setKeyword] = useState();
@@ -105,7 +106,7 @@ function Map() {
       handleSearch();
       setMarkers([]);
     }
-  }, [searchWord, map]);
+  }, [searchWord, searchCount, map]);
 
   // 데이터 변경 감지
   //   useEffect(() => {
