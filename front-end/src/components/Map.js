@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setSearchResult } from "../features/search/searchSlice";
 
 function Map() {
+  const dispatch = useDispatch();
   const searchWord = useSelector((state) => state.search.searchWord);
   const searchCount = useSelector((state) => state.search.searchCount);
+  const searchResult = useSelector((state) => state.search.searchResult);
   const locations = ["서울", "부산", "대구", "인천", "광주"];
   const [map, setMap] = useState(null);
   const [keyword, setKeyword] = useState();
@@ -183,6 +186,7 @@ function Map() {
         if (pagination.hasNextPage) {
           fetchResults(processResults, pagination);
         } else {
+          dispatch(setSearchResult(accumulatedResults));
           setData(accumulatedResults);
           displayPlaces(accumulatedResults);
           setLoading(false);
@@ -199,7 +203,6 @@ function Map() {
   // 장소를 표시하는 함수
   const displayPlaces = (places) => {
     console.log("Places data:", places);
-
     const newMarkers = places.map((place) => {
       console.log("Creating marker for:", place.y, place.x);
       const marker = new window.kakao.maps.Marker({

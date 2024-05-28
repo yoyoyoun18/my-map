@@ -5,6 +5,7 @@ export const searchSlice = createSlice({
   initialState: {
     searchWord: "",
     searchCount: 0,
+    searchResult: [],
   },
   reducers: {
     setSearchWord: (state, action) => {
@@ -16,10 +17,17 @@ export const searchSlice = createSlice({
     incrementSearchCount: (state) => {
       state.searchCount += 1; // 검색 횟수 증가
     },
+    setSearchResult: (state, action) => {
+      state.searchResult = action.payload; // 검색 결과 상태 업데이트
+    },
   },
 });
 
-export const { setSearchWord, resetSearchCount, incrementSearchCount } =
-  searchSlice.actions;
+export const {
+  setSearchWord,
+  resetSearchCount,
+  incrementSearchCount,
+  setSearchResult,
+} = searchSlice.actions;
 
 export default searchSlice.reducer;
