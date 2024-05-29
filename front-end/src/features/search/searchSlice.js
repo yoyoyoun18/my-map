@@ -12,13 +12,13 @@ export const searchSlice = createSlice({
       state.searchWord = action.payload;
     },
     resetSearchCount: (state) => {
-      state.searchCount = 0; // 검색 횟수 리셋
+      state.searchCount = 0;
     },
     incrementSearchCount: (state) => {
-      state.searchCount += 1; // 검색 횟수 증가
+      state.searchCount += 1;
     },
     setSearchResult: (state, action) => {
-      state.searchResult = action.payload; // 검색 결과 상태 업데이트
+      state.searchResult = action.payload;
     },
   },
 });
@@ -28,6 +28,8 @@ export const {
   resetSearchCount,
   incrementSearchCount,
   setSearchResult,
+  setIsAddressTrue,
+  setIsAddressFalse,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

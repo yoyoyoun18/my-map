@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchResult } from "../features/search/searchSlice";
+import {
+  setIsAddressFalse,
+  setIsAddressTrue,
+  setSearchResult,
+} from "../features/search/searchSlice";
 
 function Map() {
   const dispatch = useDispatch();
   const searchWord = useSelector((state) => state.search.searchWord);
   const searchCount = useSelector((state) => state.search.searchCount);
+  const isAddress = useSelector((state) => state.search.isAddress);
   const searchResult = useSelector((state) => state.search.searchResult);
   const locations = ["서울", "부산", "대구", "인천", "광주"];
   const [map, setMap] = useState(null);
@@ -166,8 +171,6 @@ function Map() {
     };
 
     const addressSearchCallback = (result, status) => {
-      console.log("주소 검색 결과:", result);
-      console.log("주소 검색 상태:", status);
       if (status === window.kakao.maps.services.Status.OK) {
         accumulatedResults = accumulatedResults.concat(result);
       }
@@ -177,8 +180,6 @@ function Map() {
     };
 
     const keywordSearchCallback = (places, status, pagination) => {
-      console.log("키워드 검색 상태:", status);
-      console.log("키워드 검색 결과:", places);
       if (status === window.kakao.maps.services.Status.OK) {
         const filteredPlaces = places.filter((place) =>
           map
