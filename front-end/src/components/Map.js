@@ -142,71 +142,65 @@ function Map() {
     if (!map || !searchWord) return;
 
     setLoading(true);
-    // 기존 마커를 지도에서 제거
     markers.forEach((marker) => marker.setMap(null));
-    setMarkers([]); // 마커 배열을 비웁니다.
+    setMarkers([]);
+    let accumulatedResults = [];
 
-    const bounds = map.getBounds();
-    const center = map.getCenter();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
-    // const radius =
-    //   getDistanceFromLatLonInKm(
-    //     sw.getLat(),
-    //     sw.getLng(),
-    //     ne.getLat(),
-    //     ne.getLng()
-    //   ) / 2;
-    const radius = 10000;
     const searchOption = {
-      location: center,
-      radius: radius,
+      location: map.getCenter(),
+      radius: 10000, // 예시로 1,000,000미터 설정
     };
 
     const ps = new window.kakao.maps.services.Places();
-    let accumulatedResults = [];
+    const geocoder = new window.kakao.maps.services.Geocoder();
 
-    const fetchResults = (callback, pagination = null) => {
-      if (pagination) {
-        pagination.nextPage(callback); // 다음 페이지 요청
-        console.log("pagination: " + JSON.stringify(pagination));
+    const mergeResults = () => {
+      if (accumulatedResults.length > 0) {
+        dispatch(setSearchResult(accumulatedResults));
+        setData(accumulatedResults);
+        displayPlaces(accumulatedResults);
       } else {
-        ps.keywordSearch(searchWord, callback, searchOption); // 첫 페이지 요청
+        alert("검색 결과가 없습니다.");
       }
+      setLoading(false);
     };
 
-    const processResults = (places, status, pagination) => {
+    const addressSearchCallback = (result, status) => {
+      console.log("주소 검색 결과:", result);
+      console.log("주소 검색 상태:", status);
+      if (status === window.kakao.maps.services.Status.OK) {
+        accumulatedResults = accumulatedResults.concat(result);
+      }
+      // 키워드 검색 시작
+
+      ps.keywordSearch(searchWord, keywordSearchCallback, searchOption);
+    };
+
+    const keywordSearchCallback = (places, status, pagination) => {
+      console.log("키워드 검색 상태:", status);
+      console.log("키워드 검색 결과:", places);
       if (status === window.kakao.maps.services.Status.OK) {
         const filteredPlaces = places.filter((place) =>
           map
             .getBounds()
             .contain(new window.kakao.maps.LatLng(place.y, place.x))
         );
+        accumulatedResults = accumulatedResults.concat(
+          filteredPlaces.length > 0 ? filteredPlaces : places
+        );
 
-        // 필터링된 결과를 accumulatedResults에 추가합니다.
-        accumulatedResults = accumulatedResults.concat(filteredPlaces);
-
-        // 필터링된 결과가 없으면 전체 places를 accumulatedResults에 추가합니다.
-        if (filteredPlaces.length === 0) {
-          places.forEach((place) => {
-            accumulatedResults.push(place);
-          });
-        }
         if (pagination.hasNextPage) {
-          fetchResults(processResults, pagination);
+          pagination.nextPage(keywordSearchCallback);
         } else {
-          dispatch(setSearchResult(accumulatedResults));
-          setData(accumulatedResults);
-          displayPlaces(accumulatedResults);
-          setLoading(false);
+          mergeResults();
         }
       } else {
-        setLoading(false);
-        alert("검색 결과가 없습니다.");
+        mergeResults();
       }
     };
 
-    fetchResults(processResults); // 검색 시작
+    // 주소 검색을 먼저 시작
+    geocoder.addressSearch(searchWord, addressSearchCallback);
   };
 
   // 장소를 표시하는 함수
