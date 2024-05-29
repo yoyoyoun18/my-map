@@ -28,8 +28,6 @@ export const {
   resetSearchCount,
   incrementSearchCount,
   setSearchResult,
-  setIsAddressTrue,
-  setIsAddressFalse,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

@@ -6,8 +6,16 @@ import MyInfo from "./components/MyInfo";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResult";
 import { useSelector } from "react-redux";
+import BookMark from "./components/BookMark";
 
 function App() {
+  const bookmarks = [
+    { name: "집", description: "신월5동 13-9" },
+    { name: "직장", description: "서울 강남구 테헤란로14길 6" },
+    { name: "부모님 집", description: "신월5동 13-9" },
+    { name: "헬스장", description: "서울 강남구 테헤란로8길 7" },
+  ];
+
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
     <div className="flex flex-row h-screen">
@@ -18,6 +26,7 @@ function App() {
         <Header />
         <SearchBar />
         {isLoggedIn && <MyInfo />}
+        <BookMark bookmarks={bookmarks} />
         <SearchResults />
       </div>
       <Detail />
