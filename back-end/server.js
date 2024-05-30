@@ -61,25 +61,6 @@ app.post("/bookmark", async (req, res) => {
   }
 });
 
-// app.delete("/bookmarks/:id", async (req, res) => {
-//   const bookmarkId = req.params.id;
-//   try {
-//     const result = await bookmarksCollection.deleteOne({
-//       _id: new ObjectId(bookmarkId),
-//     });
-//     if (result.deletedCount === 1) {
-//       console.log("Successfully deleted one document.");
-//       res.status(200).send(`Deleted bookmark with id ${bookmarkId}`);
-//     } else {
-//       console.log("No documents matched the query. Deleted 0 documents.");
-//       res.status(404).send("Not Found");
-//     }
-//   } catch (err) {
-//     console.error("Failed to delete document:", err);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
-
 app.delete("/bookmarks/:id", async (req, res) => {
   console.log(req.params.id);
   try {
@@ -93,8 +74,6 @@ app.delete("/bookmarks/:id", async (req, res) => {
     }
   } catch (error) {
     res.status(500).send({ error: error.message });
-    console.log(error.message);
-    console.log(req.params.id);
   }
 });
 

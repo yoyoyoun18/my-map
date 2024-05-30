@@ -28,12 +28,28 @@ function BookMark({ bookmarks }) {
     setBookmarkAddress("");
   };
 
+  function removeBookmarkFromUI(bookmarkId) {
+    const element = document.getElementById(`bookmark-${bookmarkId}`);
+    if (element) {
+      element.remove(); // HTML 요소 제거
+    }
+  }
+
   const handleDelete = (bookmarkId) => {
-    axios
-      .delete(`http://localhost:8080/bookmarks/${bookmarkId}`)
+    fetch(`http://localhost:8080/bookmarks/${bookmarkId}`, {
+      method: "DELETE",
+    })
       .then((response) => {
-        console.log("Bookmark deleted successfully:", response);
-        // 성공적으로 삭제 후 필요한 상태 업데이트 또는 UI 반응
+        if (!response.ok) {
+          throw new Error("Failed to delete the bookmark");
+        }
+        return response.json(); // 서버로부터의 응답을 JSON 형식으로 파싱
+      })
+      .then((data) => {
+        console.log("Bookmark deleted successfully:", data);
+        // 여기에서 UI 업데이트 로직을 추가할 수 있습니다.
+        // 예: 삭제된 아이템을 화면에서 제거
+        removeBookmarkFromUI(bookmarkId);
       })
       .catch((error) => {
         console.error("Error deleting bookmark:", error);
@@ -49,6 +65,7 @@ function BookMark({ bookmarks }) {
       {bookmarks.map((bookmark, index) => (
         <div
           key={index}
+          id={`bookmark-${bookmark._id}`}
           className="relative flex items-center bg-white p-2 shadow rounded-lg"
           style={{ width: "auto", height: "auto" }}
         >
