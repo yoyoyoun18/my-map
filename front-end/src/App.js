@@ -21,17 +21,20 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/")
+      .get("http://localhost:8080/list")
       .then((response) => {
-        console.log(response.data);
+        setBookMarks(response.data); // 상태 업데이트
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-      })
-      .then(() => {
-        // always executed
+        setBookMarks([]); // 에러 발생 시 상태 초기화 또는 에러 처리
       });
   }, []);
+
+  useEffect(() => {
+    // 상태가 업데이트된 후 확인하고 싶을 때 사용
+    console.log(bookmarks);
+  }, [bookmarks]); // bookmarks 상태가 변경될 때마다 실행
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
