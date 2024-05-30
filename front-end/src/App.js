@@ -7,6 +7,7 @@ import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResult";
 import { useSelector } from "react-redux";
 import BookMark from "./components/BookMark";
+import axios from "axios";
 
 function App() {
   const bookmarks = [
@@ -15,6 +16,20 @@ function App() {
     { name: "부모님 집", description: "신월5동 13-9" },
     { name: "헬스장", description: "서울 강남구 테헤란로8길 7" },
   ];
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/")
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      })
+      .then(() => {
+        // always executed
+      });
+  }, []);
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
