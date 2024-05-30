@@ -18,8 +18,6 @@ function BookMark({ bookmarks }) {
       .post("http://localhost:8080/bookmark", bookmarkData)
       .then((response) => {
         console.log("Bookmark saved successfully", response);
-        // 성공적으로 데이터를 저장한 후 UI를 업데이트 하거나,
-        // 사용자에게 알림 메시지를 표시할 수 있습니다.
       })
       .catch((error) => {
         console.error("There was an error saving the bookmark", error);
@@ -28,6 +26,18 @@ function BookMark({ bookmarks }) {
     // 폼 필드 초기화
     setBookmarkName("");
     setBookmarkAddress("");
+  };
+
+  const handleDelete = (bookmarkId) => {
+    axios
+      .delete(`http://localhost:8080/bookmarks/${bookmarkId}`)
+      .then((response) => {
+        console.log("Bookmark deleted successfully:", response);
+        // 성공적으로 삭제 후 필요한 상태 업데이트 또는 UI 반응
+      })
+      .catch((error) => {
+        console.error("Error deleting bookmark:", error);
+      });
   };
 
   const handleModal = () => {
@@ -39,7 +49,7 @@ function BookMark({ bookmarks }) {
       {bookmarks.map((bookmark, index) => (
         <div
           key={index}
-          className="flex items-center bg-white p-2 shadow rounded-lg"
+          className="relative flex items-center bg-white p-2 shadow rounded-lg"
           style={{ width: "auto", height: "auto" }}
         >
           <div className="min-w-0">
@@ -47,6 +57,17 @@ function BookMark({ bookmarks }) {
               {bookmark.bookmark_name}
             </h3>
           </div>
+          <button
+            onClick={() => handleDelete(bookmark._id)}
+            className="absolute top-0 right-0 text-white bg-red-500 hover:bg-red-700 font-bold text-xs p-0.5 rounded-full"
+            style={{
+              width: "20px",
+              height: "20px",
+              transform: "translate(50%, -50%)",
+            }}
+          >
+            X
+          </button>
         </div>
       ))}
       <button
@@ -59,31 +80,45 @@ function BookMark({ bookmarks }) {
       </button>
 
       {modalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3 text-center">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                <h3>즐겨찾기 추가</h3>
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center overflow-y-auto h-full w-full p-4">
+          <div className="relative bg-white rounded-lg shadow-lg max-w-lg w-full mx-auto p-8">
+            <div className="text-center">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                즐겨찾기 추가
               </h3>
-              <div className="mt-2 px-7 py-3">
-                <form onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    value={bookmarkName}
-                    onChange={(e) => setBookmarkName(e.target.value)}
-                    placeholder="북마크 저장명을 입력해주세요"
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={bookmarkAddress}
-                    onChange={(e) => setBookmarkAddress(e.target.value)}
-                    placeholder="주소를 입력해주세요"
-                    required
-                  />
-                  <button type="submit">Save</button>
-                </form>
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <input
+                  type="text"
+                  value={bookmarkName}
+                  onChange={(e) => setBookmarkName(e.target.value)}
+                  placeholder="북마크 저장명을 입력해주세요"
+                  className="block w-full px-4 py-2 text-lg text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
+                  required
+                />
+                <input
+                  type="text"
+                  value={bookmarkAddress}
+                  onChange={(e) => setBookmarkAddress(e.target.value)}
+                  placeholder="주소를 입력해주세요"
+                  className="block w-full px-4 py-2 text-lg text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
+                  required
+                />
+                <div className="flex justify-center items-center space-x-4">
+                  <button
+                    type="submit"
+                    className="px-6 py-2 border border-transparent text-lg font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    저장
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleModal}
+                    className="px-6 py-2 border border-gray-300 text-lg font-medium rounded-md text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                  >
+                    취소
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
