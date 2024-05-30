@@ -10,12 +10,14 @@ import BookMark from "./components/BookMark";
 import axios from "axios";
 
 function App() {
-  const bookmarks = [
-    { name: "집", description: "신월5동 13-9" },
-    { name: "직장", description: "서울 강남구 테헤란로14길 6" },
-    { name: "부모님 집", description: "신월5동 13-9" },
-    { name: "헬스장", description: "서울 강남구 테헤란로8길 7" },
-  ];
+  // const bookmarks = [
+  //   { name: "집", description: "신월5동 13-9" },
+  //   { name: "직장", description: "서울 강남구 테헤란로14길 6" },
+  //   { name: "부모님 집", description: "신월5동 13-9" },
+  //   { name: "헬스장", description: "서울 강남구 테헤란로8길 7" },
+  // ];
+
+  const [bookmarks, setBookMarks] = useState([]);
 
   useEffect(() => {
     axios
