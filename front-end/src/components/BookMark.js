@@ -109,6 +109,37 @@ function BookMark({ bookmarks }) {
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">
                 즐겨찾기 추가
               </h3>
+              <div className="flex flex-col flex-wrap space-y-2 lg:flex-row lg:gap-2 lg:space-y-0 p-4">
+                {bookmarks.map((bookmark, index) => (
+                  <div
+                    key={index}
+                    id={`bookmark-${bookmark._id}`}
+                    className="relative flex items-center bg-gray-200 p-2 rounded-lg shadow-md"
+                    style={{ width: "auto", height: "auto" }}
+                  >
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-semibold truncate text-gray-800">
+                        {bookmark.bookmark_name}
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => handleDelete(bookmark._id)}
+                      className="absolute top-0 right-0 text-white bg-gray-700 hover:bg-gray-500 font-bold text-xs p-0.5 rounded-full"
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        transform: "translate(50%, -50%)",
+                        fontSize: "0.6rem",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                  </div>
+                ))}
+              </div>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <input
                   type="text"
