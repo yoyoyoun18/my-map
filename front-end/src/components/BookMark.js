@@ -1,12 +1,21 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { addBookmark } from "../features/bookmarks/bookmarksSlice";
 
-function BookMark({ bookmarks }) {
+function BookMark() {
+  const dispatch = useDispatch();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [bookmarkName, setBookmarkName] = useState("");
   const [bookmarkAddress, setBookmarkAddress] = useState("");
+  const bookmarks = useSelector((state) => state.bookmarks.items);
+
+  // useEffect(() => {
+  //   console.log("bookmarks: " + JSON.stringify(bookmarks));
+  // }, [bookmarks]);
 
   const handleSubmit = (event) => {
     event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
@@ -19,21 +28,29 @@ function BookMark({ bookmarks }) {
     axios
       .post("http://localhost:8080/bookmark", bookmarkData)
       .then((response) => {
-        console.log("Bookmark saved successfully", response);
+        console.log("Bookmark saved successfully", response.data);
+        console.log();
+        dispatch(addBookmark(bookmarkData));
+        setBookmarkName(""); // 폼 필드 초기화
+        setBookmarkAddress(""); // 폼 필드 초기화
+        handleModal();
       })
       .catch((error) => {
         console.error("There was an error saving the bookmark", error);
       });
-
-    // 폼 필드 초기화
-    setBookmarkName("");
-    setBookmarkAddress("");
   };
 
   function removeBookmarkFromUI(bookmarkId) {
     const element = document.getElementById(`bookmark-${bookmarkId}`);
     if (element) {
       element.remove(); // HTML 요소 제거
+    }
+  }
+
+  function apppendBookmarkFromUI(bookmarkId) {
+    const element = document.getElementById(`bookmark-${bookmarkId}`);
+    if (element) {
+      element.append(); // HTML 요소 추가
     }
   }
 
@@ -49,9 +66,8 @@ function BookMark({ bookmarks }) {
       })
       .then((data) => {
         console.log("Bookmark deleted successfully:", data);
-        // 여기에서 UI 업데이트 로직을 추가할 수 있습니다.
-        // 예: 삭제된 아이템을 화면에서 제거
-        removeBookmarkFromUI(bookmarkId);
+        const element = document.getElementById(`bookmark-${bookmarkId}`);
+        element && removeBookmarkFromUI(bookmarkId);
       })
       .catch((error) => {
         console.error("Error deleting bookmark:", error);
@@ -69,7 +85,6 @@ function BookMark({ bookmarks }) {
           key={index}
           id={`bookmark-${bookmark._id}`}
           className="relative flex items-center bg-white p-2 shadow rounded-lg"
-          style={{ width: "auto", height: "auto" }}
         >
           <div className="min-w-0">
             <h3 className="text-sm font-semibold truncate">
@@ -83,7 +98,6 @@ function BookMark({ bookmarks }) {
               width: "16px",
               height: "16px",
               transform: "translate(50%, -50%)",
-              fontSize: "0.6rem",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",

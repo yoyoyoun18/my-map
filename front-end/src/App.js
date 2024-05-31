@@ -8,22 +8,25 @@ import SearchResult from "./components/SearchResult";
 import BookMark from "./components/BookMark";
 import axios from "axios";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
 
 function App() {
-  const [bookmarks, setBookMarks] = useState([]);
-
+  const dispatch = useDispatch();
+  const bookmarks = useSelector((state) => state.bookmarks.items);
   useEffect(() => {
     axios
       .get("http://localhost:8080/list")
       .then((response) => {
-        setBookMarks(response.data);
+        // 성공적으로 데이터를 받아오면 Redux 상태 업데이트
+        dispatch(setBookmarks(response.data));
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        setBookMarks([]);
+        // 에러 발생 시 빈 배열로 Redux 상태 설정
+        dispatch(setBookmarks([]));
       });
-  }, []);
+  }, [bookmarks]);
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
@@ -40,7 +43,7 @@ function App() {
                 <Header />
                 <SearchBar />
                 {isLoggedIn && <MyInfo />}
-                <BookMark bookmarks={bookmarks} />
+                {bookmarks.length > 0 && <BookMark />}
                 <SearchResult />
               </div>
               <Detail />
