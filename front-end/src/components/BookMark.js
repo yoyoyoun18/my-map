@@ -7,6 +7,7 @@ import {
   addBookmark,
   removeBookmark,
 } from "../features/bookmarks/bookmarksSlice";
+import { setSearchWord } from "../features/search/searchSlice";
 
 function BookMark() {
   const dispatch = useDispatch();
@@ -15,10 +16,12 @@ function BookMark() {
   const [bookmarkName, setBookmarkName] = useState("");
   const [bookmarkAddress, setBookmarkAddress] = useState("");
   const bookmarks = useSelector((state) => state.bookmarks.items);
+  const searchWord = useSelector((state) => state.search.searchWord);
 
-  // useEffect(() => {
-  //   console.log("bookmarks: " + JSON.stringify(bookmarks));
-  // }, [bookmarks]);
+  const handleSearchWord = (bookmarkWord) => {
+    console.log(bookmarkWord);
+    dispatch(setSearchWord(bookmarkWord));
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
@@ -31,8 +34,6 @@ function BookMark() {
     axios
       .post("http://localhost:8080/bookmark", bookmarkData)
       .then((response) => {
-        console.log("Bookmark saved successfully", response.data);
-        console.log();
         dispatch(addBookmark(bookmarkData));
         setBookmarkName(""); // 폼 필드 초기화
         setBookmarkAddress(""); // 폼 필드 초기화
@@ -42,20 +43,6 @@ function BookMark() {
         console.error("There was an error saving the bookmark", error);
       });
   };
-
-  function removeBookmarkFromUI(bookmarkId) {
-    const element = document.getElementById(`bookmark-${bookmarkId}`);
-    if (element) {
-      element.remove(); // HTML 요소 제거
-    }
-  }
-
-  function apppendBookmarkFromUI(bookmarkId) {
-    const element = document.getElementById(`bookmark-${bookmarkId}`);
-    if (element) {
-      element.append(); // HTML 요소 추가
-    }
-  }
 
   const handleDelete = (bookmarkId) => {
     fetch(`http://localhost:8080/bookmarks/${bookmarkId}`, {
@@ -86,7 +73,8 @@ function BookMark() {
         <div
           key={index}
           id={`bookmark-${bookmark._id}`}
-          className="relative flex items-center bg-white p-2 shadow rounded-lg"
+          className="relative flex items-center bg-white p-2 shadow rounded-lg cursor-pointer"
+          onClick={() => handleSearchWord(bookmark.bookmark_address)}
         >
           <div className="min-w-0">
             <h3 className="text-sm font-semibold truncate">

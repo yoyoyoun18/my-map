@@ -44,7 +44,7 @@ function Map() {
       alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.");
       initializeMap(37.5662952, 126.9779451); // 기본 위치 설정
     }
-  }, [myLocationCount]);
+  }, []);
 
   // 지도 초기화 함수
   const initializeMap = (lat, lng) => {
@@ -56,24 +56,8 @@ function Map() {
 
     const createdMap = new window.kakao.maps.Map(container, options);
     setMap(createdMap);
-
-    // 타일이 로드된 후에 실행될 이벤트 리스너 추가
-    // window.kakao.maps.event.addListener(createdMap, "tilesloaded", () => {
-    //   displayPlaces([
-    //     {
-    //       y: lat,
-    //       x: lng,
-    //       place_name: "내 위치",
-    //     },
-    //   ]);
-    // });
   };
 
-  //   useEffect(() => {
-  //     setKeyword(searchWord);
-  //   }, [searchWord]);
-
-  // 지도의 중심좌표 변경 감지
   useEffect(() => {
     if (map) {
       const handleCenterChange = () => {
@@ -96,19 +80,6 @@ function Map() {
     }
   }, [map]);
 
-  //   useEffect(() => {
-  //     if (map) {
-  //       displayPlaces([
-  //         {
-  //           y: map.getCenter().getLat(),
-  //           x: map.getCenter().getLng(),
-  //           place_name: "내 위치",
-  //         },
-  //       ]);
-  //     }
-  //   }, [map]);
-
-  // 중심 좌표나 검색어 변경 시 검색 실행
   useEffect(() => {
     if (map) {
       markers.forEach((marker) => marker.setMap(null));
@@ -117,31 +88,24 @@ function Map() {
     }
   }, [searchWord, searchCount]);
 
-  const markerTest = () => {
-    markers.forEach((marker) => marker.setMap(null));
-    setMarkers([]);
-    displayPlaces([]);
-    console.log(markers);
-  };
+  // function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  //   var R = 6371; // 지구의 반경 (km)
+  //   var dLat = deg2rad(lat2 - lat1);
+  //   var dLon = deg2rad(lon2 - lon1);
+  //   var a =
+  //     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+  //     Math.cos(deg2rad(lat1)) *
+  //       Math.cos(deg2rad(lat2)) *
+  //       Math.sin(dLon / 2) *
+  //       Math.sin(dLon / 2);
+  //   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  //   var d = R * c; // 거리 (km)
+  //   return d * 1000; // 미터로 변환
+  // }
 
-  function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-    var R = 6371; // 지구의 반경 (km)
-    var dLat = deg2rad(lat2 - lat1);
-    var dLon = deg2rad(lon2 - lon1);
-    var a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) *
-        Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c; // 거리 (km)
-    return d * 1000; // 미터로 변환
-  }
-
-  function deg2rad(deg) {
-    return deg * (Math.PI / 180);
-  }
+  // function deg2rad(deg) {
+  //   return deg * (Math.PI / 180);
+  // }
 
   const handleSearch = () => {
     if (!map || !searchWord) return;
@@ -234,11 +198,6 @@ function Map() {
       const newCenter = new window.kakao.maps.LatLng(places[0].y, places[0].x);
       map.setCenter(newCenter);
     }
-  };
-
-  // 현재 위치에서 재검색 버튼 클릭 시 실행되는 함수
-  const handleCurrentSearch = () => {
-    setMyLocationCount((myLocationCount) => myLocationCount + 1);
   };
 
   return (
