@@ -73,9 +73,11 @@ function BookMark() {
           key={index}
           id={`bookmark-${bookmark._id}`}
           className="relative flex items-center bg-white p-2 shadow rounded-lg cursor-pointer"
-          onClick={() => handleSearchWord(bookmark.bookmark_address)}
         >
-          <div className="min-w-0">
+          <div
+            className="min-w-0"
+            onClick={() => handleSearchWord(bookmark.bookmark_address)}
+          >
             <h3 className="text-sm font-semibold truncate">
               {bookmark.bookmark_name}
             </h3>
