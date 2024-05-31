@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { addBookmark } from "../features/bookmarks/bookmarksSlice";
+import {
+  addBookmark,
+  removeBookmark,
+} from "../features/bookmarks/bookmarksSlice";
 
 function BookMark() {
   const dispatch = useDispatch();
@@ -67,7 +70,6 @@ function BookMark() {
       .then((data) => {
         console.log("Bookmark deleted successfully:", data);
         const element = document.getElementById(`bookmark-${bookmarkId}`);
-        element && removeBookmarkFromUI(bookmarkId);
       })
       .catch((error) => {
         console.error("Error deleting bookmark:", error);
@@ -79,7 +81,7 @@ function BookMark() {
   };
 
   return (
-    <div className="flex flex-col flex-wrap space-y-2 lg:flex-row lg:space-x-2 lg:space-y-0">
+    <div className="flex flex-col flex-wrap space-y-2 lg:flex-row lg:space-x-2 lg:space-y-0 pb-4">
       {bookmarks.map((bookmark, index) => (
         <div
           key={index}
@@ -137,7 +139,7 @@ function BookMark() {
                       </h3>
                     </div>
                     <button
-                      onClick={() => handleDelete(bookmark._id)}
+                      onClick={() => dispatch(removeBookmark(bookmark._id))}
                       className="absolute top-0 right-0 text-white bg-gray-700 hover:bg-gray-500 font-bold text-xs p-0.5 rounded-full"
                       style={{
                         width: "16px",
