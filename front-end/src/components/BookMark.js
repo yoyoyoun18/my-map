@@ -19,7 +19,6 @@ function BookMark() {
   const searchWord = useSelector((state) => state.search.searchWord);
 
   const handleSearchWord = (bookmarkWord) => {
-    console.log(bookmarkWord);
     dispatch(setSearchWord(bookmarkWord));
   };
 

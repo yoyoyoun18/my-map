@@ -4,6 +4,7 @@ import {
   setIsAddressFalse,
   setIsAddressTrue,
   setSearchResult,
+  setSearchWord,
 } from "../features/search/searchSlice";
 
 function Map() {
@@ -12,7 +13,7 @@ function Map() {
   const searchCount = useSelector((state) => state.search.searchCount);
   const isAddress = useSelector((state) => state.search.isAddress);
   const searchResult = useSelector((state) => state.search.searchResult);
-  const locations = ["서울", "부산", "대구", "인천", "광주"];
+  const locations = ["편의점", "식당", "카페", "주차장", "마트"];
   const [map, setMap] = useState(null);
   const [keyword, setKeyword] = useState();
   const [markers, setMarkers] = useState([]);
@@ -45,6 +46,10 @@ function Map() {
       initializeMap(37.5662952, 126.9779451); // 기본 위치 설정
     }
   }, []);
+
+  const handleSearchWord = (bookmarkWord) => {
+    dispatch(setSearchWord(bookmarkWord));
+  };
 
   // 지도 초기화 함수
   const initializeMap = (lat, lng) => {
@@ -208,8 +213,8 @@ function Map() {
           {locations.map((location, index) => (
             <button
               key={index}
-              className="relative z-50 w-24 h-10 px-3 py-2 font-bold text-blue-500 bg-transparent border border-blue-500 rounded cursor-pointer hover:bg-blue-500 hover:text-white"
-              //   onClick={() => handleLocationClick(location)}
+              className="relative z-50 w-24 h-10 px-3 py-2 font-bold text-gray-700 bg-white rounded-lg shadow cursor-pointer hover:text-blue-500 transition-colors duration-300 ease-in-out"
+              onClick={() => handleSearchWord(location)}
             >
               #{location}
             </button>
