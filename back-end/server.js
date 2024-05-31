@@ -51,10 +51,8 @@ app.post("/bookmark", async (req, res) => {
       bookmark_name,
       bookmark_address,
     });
-    res.status(201).send({
-      message: "Bookmark added successfully",
-      _id: response.insertedId,
-    });
+    // 성공적으로 추가된 후, 메인 페이지로 리다이렉트
+    res.redirect(303, "http://localhost:3000//"); // HTTP 303 See Other를 사용하여 리다이렉트
   } catch (error) {
     console.error(error);
     res.status(500).send("Error adding the bookmark");

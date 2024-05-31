@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 function BookMark({ bookmarks }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -76,14 +78,18 @@ function BookMark({ bookmarks }) {
           </div>
           <button
             onClick={() => handleDelete(bookmark._id)}
-            className="absolute top-0 right-0 text-white bg-red-500 hover:bg-red-700 font-bold text-xs p-0.5 rounded-full"
+            className="absolute top-0 right-0 text-white bg-gray-700 hover:bg-gray-500 font-bold text-xs p-0.5 rounded-full"
             style={{
-              width: "20px",
-              height: "20px",
+              width: "16px",
+              height: "16px",
               transform: "translate(50%, -50%)",
+              fontSize: "0.6rem",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            X
+            <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
       ))}
