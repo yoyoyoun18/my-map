@@ -175,9 +175,9 @@ function Map() {
 
   // 장소를 표시하는 함수
   const displayPlaces = (places) => {
-    console.log("Places data:", places);
+    // console.log("Places data:", places);
     const newMarkers = places.map((place) => {
-      console.log("Creating marker for:", place.y, place.x);
+      // console.log("Creating marker for:", place.y, place.x);
       const marker = new window.kakao.maps.Marker({
         map: map,
         position: new window.kakao.maps.LatLng(place.y, place.x),

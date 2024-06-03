@@ -6,6 +6,7 @@ export const searchSlice = createSlice({
     searchWord: "",
     searchCount: 0,
     searchResult: [],
+    searchDetailInfo: {},
   },
   reducers: {
     setSearchWord: (state, action) => {
@@ -20,6 +21,9 @@ export const searchSlice = createSlice({
     setSearchResult: (state, action) => {
       state.searchResult = action.payload;
     },
+    setSearchDetailInfo: (state, action) => {
+      state.searchDetailInfo = action.payload; // searchDetailInfo를 업데이트하는 리듀서
+    },
   },
 });
 
@@ -28,6 +32,7 @@ export const {
   resetSearchCount,
   incrementSearchCount,
   setSearchResult,
+  setSearchDetailInfo,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

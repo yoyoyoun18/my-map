@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입</title>
+    <link href="/css/tailwind.css" rel="stylesheet" />
+  </head>
+  <body
+    class="flex items-center justify-center min-h-screen bg-gray-100 font-roboto"
+  >
+    <div class="max-w-sm p-8 bg-white rounded-lg shadow-lg">
+      <h1 class="mb-6 text-2xl font-semibold text-center">회원가입</h1>
+      <!-- 이미지 div 추가 -->
+      <div
+        class="w-24 h-24 mb-4 mx-auto rounded-full bg-center bg-cover cursor-pointer"
+        style="
+          background-image: url('https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/9JDV/image/FQtSFWM_1h2TEwr0SgUqvE5X0ds.JPG');
+        "
+      ></div>
+      <form class="space-y-4" action="/register" method="POST">
+        <div>
+          <label
+            for="name"
+            class="block text-sm font-medium text-gray-700"
+          ></label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="아이디 입력"
+            class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700"
+          ></label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="이메일 주소"
+            class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700"
+          ></label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="비밀번호"
+            class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="confirmPassword"
+            class="block text-sm font-medium text-gray-700"
+          ></label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="비밀번호 재입력"
+            class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            required
+          />
+        </div>
+        <div>
+          <button
+            type="submit"
+            class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            회원가입
+          </button>
+        </div>
+      </form>
+      <div class="mt-4 text-center">
+        <a href="/login" class="text-sm text-indigo-600 hover:text-indigo-800">
+          이미 계정이 있으신가요? 로그인
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,11 +1,27 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { setSearchDetailInfo } from "../features/search/searchSlice";
 
 function SearchResult() {
+  const dispatch = useDispatch();
+  const searchDetailInfo = useSelector(
+    (state) => state.search.searchDetailInfo
+  );
+  const testSearchResultId = (id) => {
+    axios
+      .get(`http://localhost:8080/api/data/${id}`)
+      .then((response) => {
+        dispatch(setSearchDetailInfo(response.data));
+      })
+      .catch((error) => {
+        console.error("요청 에러:", error);
+      });
+  };
+
   const searchResult = useSelector((state) => state.search.searchResult);
   return (
     <div className="space-y-2">
@@ -13,7 +29,8 @@ function SearchResult() {
         searchResult.length == 1 ? (
           <div
             key={i}
-            className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
+            className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer" // 여기에 onClick
+            onClick={() => testSearchResultId(result.id)}
           >
             <div className="flex items-center space-x-2">
               {" "}
@@ -41,6 +58,7 @@ function SearchResult() {
           <div
             key={i}
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
+            onClick={() => testSearchResultId(result.id)}
           >
             <h4 className="font-semibold text-lg text-gray-800">
               {result.place_name}

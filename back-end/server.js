@@ -1,5 +1,7 @@
 const express = require("express");
+const axios = require("axios");
 const cors = require("cors");
+const path = require("path");
 const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
@@ -9,6 +11,11 @@ app.use(express.static(__dirname + "/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
 
 const url =
   "mongodb+srv://admin:as123123@kpkpkp.cau2nx4.mongodb.net/?retryWrites=true&w=majority&appName=kpkpkp";
@@ -84,4 +91,25 @@ app.get("/", (req, res) => {
   ];
   console.log("Server restarted at", new Date());
   res.send(data);
+});
+
+app.get("/api/data/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const response = await axios.get(
+      `https://place.map.kakao.com/main/v/${id}`
+    );
+    res.send(response.data);
+  } catch (error) {
+    console.error("API 요청 실패:", error);
+    res.status(500).send("API 요청에 실패했습니다");
+  }
+});
+
+app.get("/login", (req, res) => {
+  res.render("login"); // login.ejs 파일을 렌더링
+});
+
+app.get("/register", (req, res) => {
+  res.render("register"); // register.ejs 파일을 렌더링
 });
