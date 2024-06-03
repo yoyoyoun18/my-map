@@ -3,6 +3,7 @@ const axios = require("axios");
 const cors = require("cors");
 const path = require("path");
 const { MongoClient, ObjectId } = require("mongodb");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -22,14 +23,16 @@ const url =
 const client = new MongoClient(url);
 
 let db;
-let bookmarksCollection; // 명확한 참조를 위한 변수
+let bookmarksCollection;
+let userInfoCollection;
 
 client
   .connect()
   .then(() => {
     console.log("DB연결성공");
     db = client.db("forum");
-    bookmarksCollection = db.collection("bookmark"); // 컬렉션 참조 초기화
+    bookmarksCollection = db.collection("bookmark");
+    userInfoCollection = db.collection("userinfo");
     app.listen(8080, () => {
       console.log("http://localhost:8080 에서 서버 실행중");
     });
@@ -58,8 +61,7 @@ app.post("/bookmark", async (req, res) => {
       bookmark_name,
       bookmark_address,
     });
-    // 성공적으로 추가된 후, 메인 페이지로 리다이렉트
-    res.redirect(303, "http://localhost:3000//"); // HTTP 303 See Other를 사용하여 리다이렉트
+    res.redirect(303, "/");
   } catch (error) {
     console.error(error);
     res.status(500).send("Error adding the bookmark");
@@ -70,7 +72,7 @@ app.delete("/bookmarks/:id", async (req, res) => {
   console.log(req.params.id);
   try {
     const result = await db.collection("bookmark").deleteOne({
-      _id: new ObjectId(req.params.id), // URL의 파라미터에서 _id를 추출하여 ObjectId로 변환
+      _id: new ObjectId(req.params.id),
     });
     if (result.deletedCount === 0) {
       res.status(404).send({ message: "No bookmark found with that ID" });
@@ -107,9 +109,50 @@ app.get("/api/data/:id", async (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login"); // login.ejs 파일을 렌더링
+  res.render("login");
 });
 
 app.get("/register", (req, res) => {
-  res.render("register"); // register.ejs 파일을 렌더링
+  res.render("register");
+});
+
+app.post("/register/submit", async (req, res) => {
+  const { name, email, password, confirmPassword } = req.body;
+  if (!name || !password || !email || !confirmPassword) {
+    return res.status(400).send("모든 필드를 입력해주세요.");
+  }
+  if (password !== confirmPassword) {
+    return res.status(400).send("비밀번호가 일치하지 않습니다.");
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 사용자 이름이 같은 문서 찾기
+    const existingUsers = await userInfoCollection.find({ name }).toArray();
+    const existingUsersEmail = await userInfoCollection
+      .find({ email })
+      .toArray();
+    console.log(
+      "Number of existing users with the same name:",
+      existingUsers.length
+    );
+
+    // 이미 같은 이름의 사용자가 있는 경우 처리
+    if (existingUsers.length > 0) {
+      return res.status(400).send("이미 존재하는 사용자 이름입니다.");
+    } else if (existingUsersEmail.length > 0) {
+      return res.status(400).send("이미 존재하는 사용자 이메일입니다.");
+    }
+
+    const response = await userInfoCollection.insertOne({
+      name,
+      email,
+      password: hashedPassword,
+    });
+    res.redirect(303, "/");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error adding the user");
+  }
 });
