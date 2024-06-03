@@ -14,6 +14,8 @@ import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
 function App() {
   const dispatch = useDispatch();
   const bookmarks = useSelector((state) => state.bookmarks.items);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
   useEffect(() => {
     axios
       .get("http://localhost:8080/list")
@@ -27,6 +29,27 @@ function App() {
         dispatch(setBookmarks([]));
       });
   }, [bookmarks]);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/protected", {
+          withCredentials: true,
+        });
+        setIsAuthenticated(true);
+        setUser(response.data.user);
+      } catch (error) {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    console.log(user);
+  }, []);
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (

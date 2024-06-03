@@ -4,8 +4,11 @@ const cors = require("cors");
 const path = require("path");
 const { MongoClient, ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser"); // cookie-parser 추가
 
 const app = express();
+const SECRET_KEY = "8qkN5pS9u1"; // JWT 시크릿 키
 
 app.use(cors());
 app.use(express.static(__dirname + "/public"));
@@ -13,10 +16,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use(cookieParser()); // cookie-parser 미들웨어 사용
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
+app.use(
+  cors({
+    origin: "http://localhost:3000", // React 애플리케이션의 출처
+    credentials: true, // 쿠키를 허용하도록 설정
+  })
+);
 
 const url =
   "mongodb+srv://admin:as123123@kpkpkp.cau2nx4.mongodb.net/?retryWrites=true&w=majority&appName=kpkpkp";
@@ -174,9 +184,46 @@ app.post("/login", async (req, res) => {
       return res.status(400).send("비밀번호가 일치하지 않습니다.");
     }
 
-    res.send("로그인 성공");
+    const token = jwt.sign({ name: user.name, email: user.email }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    // JWT를 HttpOnly 쿠키로 설정
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 3600000,
+    }); // 1시간 동안 유효
+    res.json({ message: "로그인 성공" });
   } catch (error) {
     console.error(error);
     res.status(500).send("로그인 처리 중 오류가 발생했습니다.");
   }
+});
+
+app.get("/protected", authenticateJWT, (req, res) => {
+  res.send("This is protected data");
+});
+
+// JWT 인증 미들웨어
+function authenticateJWT(req, res, next) {
+  const token = req.cookies.token; // 쿠키에서 JWT 읽기
+
+  if (token) {
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+
+      req.user = user;
+      next();
+    });
+  } else {
+    res.sendStatus(401);
+  }
+}
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("token"); // 쿠키 삭제
+  res.json({ message: "로그아웃 성공" });
 });
