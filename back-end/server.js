@@ -156,3 +156,27 @@ app.post("/register/submit", async (req, res) => {
     res.status(500).send("Error adding the user");
   }
 });
+
+app.post("/login", async (req, res) => {
+  const { name, password } = req.body;
+  if (!name || !password) {
+    return res.status(400).send("모든 필드를 입력해주세요.");
+  }
+
+  try {
+    const user = await userInfoCollection.findOne({ name });
+    if (!user) {
+      return res.status(400).send("사용자를 찾을 수 없습니다.");
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).send("비밀번호가 일치하지 않습니다.");
+    }
+
+    res.send("로그인 성공");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("로그인 처리 중 오류가 발생했습니다.");
+  }
+});
