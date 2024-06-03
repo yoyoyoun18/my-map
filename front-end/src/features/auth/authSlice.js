@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: null, // 사용자 정보를 저장
   isLoggedIn: true, // 로그인 상태
-  token: null, // 인증 토큰
+  token: false, // 인증 토큰
 };
 
 const authSlice = createSlice({
@@ -20,8 +20,11 @@ const authSlice = createSlice({
       state.token = null;
       state.isLoggedIn = false;
     },
+    isToken: (state, action) => {
+      state.token = action.payload.token;
+    },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, isToken } = authSlice.actions;
 export default authSlice.reducer;

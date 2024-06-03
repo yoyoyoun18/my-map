@@ -223,6 +223,20 @@ function authenticateJWT(req, res, next) {
   }
 }
 
+app.get("/check-auth", (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+      if (err) {
+        return res.json({ authenticated: false });
+      }
+      return res.json({ authenticated: true });
+    });
+  } else {
+    res.json({ authenticated: false });
+  }
+});
+
 app.get("/logout", (req, res) => {
   res.clearCookie("token"); // 쿠키 삭제
   res.json({ message: "로그아웃 성공" });

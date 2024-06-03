@@ -10,12 +10,13 @@ import axios from "axios";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
+import { isToken } from "./features/auth/authSlice";
 
 function App() {
   const dispatch = useDispatch();
   const bookmarks = useSelector((state) => state.bookmarks.items);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const token = useSelector((state) => state.auth.token);
+
   useEffect(() => {
     axios
       .get("http://localhost:8080/list")
@@ -28,30 +29,24 @@ function App() {
         // 에러 발생 시 빈 배열로 Redux 상태 설정
         dispatch(setBookmarks([]));
       });
-  }, [bookmarks]);
+  }, [dispatch]);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/protected", {
+        const response = await axios.get("http://localhost:8080/check-auth", {
           withCredentials: true,
         });
-        setIsAuthenticated(true);
-        setUser(response.data.user);
+        dispatch(isToken({ token: response.data.authenticated }));
       } catch (error) {
-        setIsAuthenticated(false);
-        setUser(null);
+        dispatch(isToken({ token: false }));
+        console.error("Error checking authentication:", error);
       }
     };
 
     checkAuth();
-  }, []);
+  }, [dispatch]);
 
-  useEffect(() => {
-    console.log(user);
-  }, []);
-
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
     <Router>
       <Routes>
@@ -65,7 +60,7 @@ function App() {
               >
                 <Header />
                 <SearchBar />
-                {isLoggedIn && <MyInfo />}
+                {token && <MyInfo />}
                 {bookmarks.length > 0 && <BookMark />}
                 <SearchResult />
               </div>
