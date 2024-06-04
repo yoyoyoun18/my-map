@@ -38,7 +38,7 @@ function BookMark() {
     } else {
       dispatch(setBookmarks(""));
     }
-  }, [token, myName, dispatch]);
+  }, [token, myName, dispatch, bookmarks]);
 
   const handleSubmit = (event) => {
     event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
@@ -97,7 +97,8 @@ function BookMark() {
       </button>
 
       {/* 북마크 렌더링 */}
-      {token && bookmarks &&
+      {token &&
+        bookmarks &&
         bookmarks.map((bookmark, index) => (
           <div
             key={index}
