@@ -74,7 +74,7 @@ function App() {
                 <Header />
                 <SearchBar />
                 {token && <MyInfo />}
-                {bookmarks.length > 0 && <BookMark />}
+                <BookMark />
                 <SearchResult />
               </div>
               <Detail />

@@ -87,36 +87,6 @@ function BookMark() {
 
   return (
     <div className="flex flex-col flex-wrap space-y-2 lg:flex-row lg:space-x-2 lg:space-y-0 pb-4">
-      {bookmarks.map((bookmark, index) => (
-        <div
-          key={index}
-          id={`bookmark-${bookmark._id}`}
-          className="relative flex items-center bg-white p-2 shadow rounded-lg cursor-pointer"
-        >
-          <div
-            className="min-w-0"
-            onClick={() => handleSearchWord(bookmark.bookmark_address)}
-          >
-            <h3 className="text-sm font-semibold truncate">
-              {bookmark.bookmark_name}
-            </h3>
-          </div>
-          <button
-            onClick={() => handleDelete(bookmark._id)}
-            className="absolute top-0 right-0 text-white bg-gray-700 hover:bg-gray-500 font-bold text-xs p-0.5 rounded-full"
-            style={{
-              width: "16px",
-              height: "16px",
-              transform: "translate(50%, -50%)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-        </div>
-      ))}
       <button
         className="flex items-center bg-white p-2 shadow rounded-lg"
         onClick={handleModal}
@@ -125,6 +95,39 @@ function BookMark() {
           <h2 className="text-md font-semibold truncate">+</h2>
         </div>
       </button>
+
+      {/* 북마크 렌더링 */}
+      {token && bookmarks &&
+        bookmarks.map((bookmark, index) => (
+          <div
+            key={index}
+            id={`bookmark-${bookmark._id}`}
+            className="relative flex items-center bg-white p-2 shadow rounded-lg cursor-pointer"
+          >
+            <div
+              className="min-w-0"
+              onClick={() => handleSearchWord(bookmark.bookmark_address)}
+            >
+              <h3 className="text-sm font-semibold truncate">
+                {bookmark.bookmark_name}
+              </h3>
+            </div>
+            <button
+              onClick={() => handleDelete(bookmark._id)}
+              className="absolute top-0 right-0 text-white bg-gray-700 hover:bg-gray-500 font-bold text-xs p-0.5 rounded-full"
+              style={{
+                width: "16px",
+                height: "16px",
+                transform: "translate(50%, -50%)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </div>
+        ))}
 
       {modalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center overflow-y-auto h-full w-full p-4">
