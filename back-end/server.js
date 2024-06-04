@@ -31,6 +31,7 @@ const client = new MongoClient(url);
 let db;
 let bookmarksCollection;
 let userInfoCollection;
+let currentUserCollection;
 
 client
   .connect()
@@ -39,6 +40,7 @@ client
     db = client.db("forum");
     bookmarksCollection = db.collection("bookmark");
     userInfoCollection = db.collection("userinfo");
+    currentUserCollection = db.collection("currnetuser");
     app.listen(8080, () => {
       console.log("http://localhost:8080 에서 서버 실행중");
     });
@@ -180,16 +182,28 @@ app.post("/login", async (req, res) => {
       return res.status(400).send("비밀번호가 일치하지 않습니다.");
     }
 
+    const email = user.email; // user 객체에서 이메일을 가져옵니다.
+
+    // currentUserCollection에 사용자 정보를 업데이트 또는 삽입합니다.
+    const response = await currentUserCollection.updateOne(
+      { name: user.name }, // 조건: 이름이 일치하는 사용자
+      { $set: { name: user.name, email: user.email } }, // 업데이트할 내용
+      { upsert: true } // 조건에 맞는 문서가 없으면 새로 삽입
+    );
+
+    console.log("currentUserCollection response:", response); // 디버깅 로그
+
     const token = jwt.sign({ name: user.name, email: user.email }, SECRET_KEY, {
       expiresIn: "1h",
     });
 
-    // JWT를 HttpOnly 쿠키로 설정
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // 개발 환경에서는 false로 설정. 프로덕션에서는 true로 설정.
+      secure: false,
       maxAge: 3600000,
-    }); // 1시간 동안 유효
+    });
+
+    // 로그인 성공 시 리다이렉션
     res.redirect("http://localhost:3000/");
   } catch (error) {
     console.error(error);
@@ -234,7 +248,32 @@ app.get("/check-auth", (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+app.post("/logout", async (req, res) => {
+  try {
+    const result = await currentUserCollection.deleteMany({});
+  } catch (error) {
+    console.error(error);
+  }
   res.clearCookie("token"); // 쿠키 삭제
   res.json({ message: "로그아웃 성공" });
+});
+
+app.get("/myinfo", async (req, res) => {
+  try {
+    const { name } = req.query; // 쿼리 파라미터에서 name을 가져옴
+    let filter = {};
+    if (name) {
+      filter.name = name; // name이 제공된 경우 필터에 추가
+    }
+
+    // 필터를 사용하여 MongoDB 컬렉션에서 데이터 가져옴
+    let existingUsers = await currentUserCollection.find(filter).toArray();
+
+    res.send(existingUsers);
+  } catch (error) {
+    console.error(error);
+
+    // 오류 발생 시 500 상태 코드와 함께 에러 메시지 전송
+    res.status(500).send("데이터를 불러오는 중 오류가 발생했습니다.");
+  }
 });

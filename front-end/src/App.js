@@ -10,12 +10,25 @@ import axios from "axios";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
-import { isToken } from "./features/auth/authSlice";
+import { isToken, isName, isEmail } from "./features/auth/authSlice";
+import Login from "./components/Login";
 
 function App() {
   const dispatch = useDispatch();
   const bookmarks = useSelector((state) => state.bookmarks.items);
   const token = useSelector((state) => state.auth.token);
+
+  // useEffect(() => {
+  //   // 전역 변수에 저장된 유저 정보 가져오기
+  //   const user = window.__USER__;
+  //   console.log(user);
+  //   if (user) {
+  //     // Redux 상태 업데이트
+  //     dispatch(isName(user.name));
+  //     dispatch(isEmail(user.email));
+  //     dispatch(isToken({ token: true })); // 유저가 로그인 상태임을 표시
+  //   }
+  // }, [dispatch]);
 
   useEffect(() => {
     axios
@@ -50,6 +63,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* <Route path="/login" element={<Login />} /> */}
         <Route
           path="/"
           element={

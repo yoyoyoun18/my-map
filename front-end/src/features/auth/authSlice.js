@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null, // 사용자 정보를 저장
+  email: null,
   isLoggedIn: true, // 로그인 상태
   token: false, // 인증 토큰
 };
@@ -11,8 +12,8 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+      state.user = action.payload;
+      state.email = action.payload;
       state.isLoggedIn = true;
     },
     logout: (state) => {
@@ -23,8 +24,14 @@ const authSlice = createSlice({
     isToken: (state, action) => {
       state.token = action.payload.token;
     },
+    isName: (state, action) => {
+      state.user = action.payload;
+    },
+    isEmail: (state, action) => {
+      state.email = action.payload;
+    },
   },
 });
 
-export const { login, logout, isToken } = authSlice.actions;
+export const { login, logout, isToken, isName, isEmail } = authSlice.actions;
 export default authSlice.reducer;
