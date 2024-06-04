@@ -158,7 +158,7 @@ app.post("/register/submit", async (req, res) => {
       email,
       password: hashedPassword,
     });
-    res.redirect(303, "/");
+    res.redirect(303, "http://localhost:3000/");
   } catch (error) {
     console.error(error);
     res.status(500).send("Error adding the user");
@@ -274,6 +274,60 @@ app.get("/myinfo", async (req, res) => {
     console.error(error);
 
     // 오류 발생 시 500 상태 코드와 함께 에러 메시지 전송
+    res.status(500).send("데이터를 불러오는 중 오류가 발생했습니다.");
+  }
+});
+
+app.post("/mybookmark", async (req, res) => {
+  const { bookmark_name, bookmark_address } = req.body; // 클라이언트로부터 bookmark 데이터를 받습니다.
+  const userName = "admin123"; // 업데이트할 사용자의 이름
+
+  try {
+    // 사용자 정보를 가져옵니다.
+    const user = await bookmarksCollection.insertOne({
+      name: userName,
+      bookmark_name: bookmark_name,
+      bookmark_address: bookmark_address,
+    });
+    if (!user) {
+      return res.status(404).send("사용자를 찾을 수 없습니다.");
+    }
+
+    console.log("Update result:", user);
+
+    res.send("success");
+  } catch (error) {
+    console.error(error);
+
+    // 오류 발생 시 500 상태 코드와 함께 에러 메시지 전송
+    res.status(500).send("데이터를 업데이트하는 중 오류가 발생했습니다.");
+  }
+});
+
+app.delete("/mybookmark/:id", async (req, res) => {
+  console.log(req.params.id);
+  try {
+    const result = await bookmarksCollection.deleteOne({
+      _id: new ObjectId(req.params.id),
+    });
+    if (result.deletedCount === 0) {
+      res.status(404).send({ message: "No bookmark found with that ID" });
+    } else {
+      res.send({ message: "Bookmark deleted successfully" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+app.get("/mybookmarklist/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const query = { name: userId };
+    const result = await bookmarksCollection.find(query).toArray();
+    res.send(result);
+  } catch (error) {
+    console.error(error);
     res.status(500).send("데이터를 불러오는 중 오류가 발생했습니다.");
   }
 });

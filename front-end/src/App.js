@@ -19,16 +19,15 @@ function App() {
   const token = useSelector((state) => state.auth.token);
 
   // useEffect(() => {
-  //   // 전역 변수에 저장된 유저 정보 가져오기
-  //   const user = window.__USER__;
-  //   console.log(user);
-  //   if (user) {
-  //     // Redux 상태 업데이트
-  //     dispatch(isName(user.name));
-  //     dispatch(isEmail(user.email));
-  //     dispatch(isToken({ token: true })); // 유저가 로그인 상태임을 표시
-  //   }
-  // }, [dispatch]);
+  //   axios
+  //     .post("http://localhost:8080/mybookmark", { bookmark: "test" })
+  //     .then((response) => {
+  //       console.log(response.data); // "success" 출력
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error updating bookmark:", error);
+  //     });
+  // }, []);
 
   useEffect(() => {
     axios

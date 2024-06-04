@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addBookmark,
   removeBookmark,
+  setBookmarks,
 } from "../features/bookmarks/bookmarksSlice";
 import { setSearchWord } from "../features/search/searchSlice";
 
@@ -17,10 +18,27 @@ function BookMark() {
   const [bookmarkAddress, setBookmarkAddress] = useState("");
   const bookmarks = useSelector((state) => state.bookmarks.items);
   const searchWord = useSelector((state) => state.search.searchWord);
+  const token = useSelector((state) => state.auth.token);
+  const myName = useSelector((state) => state.auth.user);
 
   const handleSearchWord = (bookmarkWord) => {
     dispatch(setSearchWord(bookmarkWord));
   };
+
+  useEffect(() => {
+    if (token && myName) {
+      axios
+        .get(`http://localhost:8080/mybookmarklist/${myName}`)
+        .then((response) => {
+          dispatch(setBookmarks(response.data));
+        })
+        .catch((error) => {
+          console.error("Error fetching bookmarks:", error);
+        });
+    } else {
+      dispatch(setBookmarks(""));
+    }
+  }, [token, myName, dispatch]);
 
   const handleSubmit = (event) => {
     event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
@@ -31,7 +49,7 @@ function BookMark() {
     };
 
     axios
-      .post("http://localhost:8080/bookmark", bookmarkData)
+      .post("http://localhost:8080/mybookmark", bookmarkData)
       .then((response) => {
         dispatch(addBookmark(bookmarkData));
         setBookmarkName(""); // 폼 필드 초기화
@@ -44,7 +62,7 @@ function BookMark() {
   };
 
   const handleDelete = (bookmarkId) => {
-    fetch(`http://localhost:8080/bookmarks/${bookmarkId}`, {
+    fetch(`http://localhost:8080/mybookmark/${bookmarkId}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -55,7 +73,8 @@ function BookMark() {
       })
       .then((data) => {
         console.log("Bookmark deleted successfully:", data);
-        const element = document.getElementById(`bookmark-${bookmarkId}`);
+        // Redux 상태에서 삭제된 북마크 제거
+        dispatch(removeBookmark(bookmarkId));
       })
       .catch((error) => {
         console.error("Error deleting bookmark:", error);
