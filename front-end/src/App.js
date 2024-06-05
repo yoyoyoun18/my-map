@@ -17,17 +17,7 @@ function App() {
   const dispatch = useDispatch();
   const bookmarks = useSelector((state) => state.bookmarks.items);
   const token = useSelector((state) => state.auth.token);
-
-  // useEffect(() => {
-  //   axios
-  //     .post("http://localhost:8080/mybookmark", { bookmark: "test" })
-  //     .then((response) => {
-  //       console.log(response.data); // "success" 출력
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error updating bookmark:", error);
-  //     });
-  // }, []);
+  const detailPageState = useSelector((state) => state.search.detailPageState);
 
   useEffect(() => {
     axios
@@ -77,7 +67,7 @@ function App() {
                 <BookMark />
                 <SearchResult />
               </div>
-              <Detail />
+              {detailPageState && <Detail />}
               <div className="flex-grow h-full">
                 <Map />
               </div>

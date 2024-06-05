@@ -42,6 +42,7 @@ function Detail() {
         <p>"정말 좋아요!" - 홍길동</p>
         <p>"분위기가 아늑해요." - 김철수</p>
       </div>
+      <div className="mb-4">asdawfwaf</div>
     </div>
   );
 }

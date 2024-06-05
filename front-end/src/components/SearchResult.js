@@ -4,10 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { setSearchDetailInfo } from "../features/search/searchSlice";
+import { isDetail, setSearchDetailInfo } from "../features/search/searchSlice";
 
 function SearchResult() {
   const dispatch = useDispatch();
+  const detailPageState = useSelector((state) => state.search.detailPageState);
   const searchDetailInfo = useSelector(
     (state) => state.search.searchDetailInfo
   );
@@ -15,6 +16,7 @@ function SearchResult() {
     axios
       .get(`http://localhost:8080/api/data/${id}`)
       .then((response) => {
+        dispatch(isDetail(true));
         dispatch(setSearchDetailInfo(response.data));
       })
       .catch((error) => {

@@ -16,7 +16,6 @@ function MyInfo() {
     axios
       .get(`http://localhost:8080/myinfo`)
       .then((response) => {
-        console.log(response.data);
         dispatch(isName(response.data[0].name));
         dispatch(isEmail(response.data[0].email));
       })
