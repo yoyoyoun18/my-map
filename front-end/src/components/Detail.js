@@ -1,17 +1,28 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { isDetail } from "../features/search/searchSlice";
 
 function Detail() {
+  const dispatch = useDispatch();
   const searchDetailInfo = useSelector(
     (state) => state.search.searchDetailInfo
   );
   const searchResult = useSelector((state) => state.search.searchResult);
+  const closeDetail = () => {
+    dispatch(isDetail(false));
+  };
 
   return (
     <div
       className="p-4 overflow-y-auto bg-white w-80 relative z-50"
       style={{ flexShrink: 0 }}
     >
+      <button
+        onClick={closeDetail}
+        className="absolute top-2 right-2 z-50 p-2 bg-white text-gray-700 rounded-full text-xl font-bold"
+      >
+        X
+      </button>
       {/* 이미지 표시 영역 */}
       <div
         className="flex items-center justify-center h-48 bg-gray-200 bg-center bg-contain"

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  isDetail,
   setIsAddressFalse,
   setIsAddressTrue,
+  setSearchDetailInfo,
   setSearchResult,
   setSearchWord,
 } from "../features/search/searchSlice";
+import axios from "axios";
 
 function Map() {
   const dispatch = useDispatch();
@@ -49,6 +52,18 @@ function Map() {
 
   const handleSearchWord = (bookmarkWord) => {
     dispatch(setSearchWord(bookmarkWord));
+  };
+
+  const testSearchResultId = (id) => {
+    axios
+      .get(`http://localhost:8080/api/data/${id}`)
+      .then((response) => {
+        dispatch(isDetail(true));
+        dispatch(setSearchDetailInfo(response.data));
+      })
+      .catch((error) => {
+        console.error("요청 에러:", error);
+      });
   };
 
   // 지도 초기화 함수
@@ -192,6 +207,10 @@ function Map() {
 
       window.kakao.maps.event.addListener(marker, "mouseout", () => {
         infowindow.close();
+      });
+
+      window.kakao.maps.event.addListener(marker, "click", () => {
+        testSearchResultId(place.id);
       });
 
       return marker;
