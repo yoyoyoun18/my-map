@@ -11,7 +11,7 @@ function Detail() {
   const currentDetailId = useSelector((state) => state.search.currentDetailId);
   const token = useSelector((state) => state.auth.token);
   const detailPageState = useSelector((state) => state.search.detailPageState);
-
+  const user = useSelector((state) => state.auth.user);
   const closeDetail = () => {
     dispatch(isDetail(false));
   };
@@ -20,7 +20,7 @@ function Detail() {
 
   const [newReview, setNewReview] = useState({
     id: currentDetailId, // Ensure this is set correctly
-    name: "",
+    name: user,
     comment: "",
   });
 
@@ -56,7 +56,7 @@ function Detail() {
             ...reviews,
             {
               id: currentDetailId,
-              name: newReview.name,
+              name: user,
               comment: newReview.comment,
             },
           ]);
@@ -127,7 +127,7 @@ function Detail() {
               placeholder="이름"
               value={newReview.name}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded hidden"
             />
             <textarea
               name="comment"
