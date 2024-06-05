@@ -51,10 +51,10 @@ client
     console.log(err);
   });
 
-app.get("/review/list:id", async (req, res) => {
+app.get("/reviews", async (req, res) => {
   try {
-    const userId = req.params.id;
-    const query = { name: userId };
+    const id = req.query.id; // 쿼리 파라미터에서 id를 가져옵니다.
+    const query = { id: id }; // id를 사용하여 쿼리합니다.
     const result = await reviewCollection.find(query).toArray();
     res.send(result);
   } catch (error) {

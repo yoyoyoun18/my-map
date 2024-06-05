@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isDetail } from "../features/search/searchSlice";
 import axios from "axios";
@@ -11,7 +11,7 @@ function Detail() {
   const currentDetailId = useSelector((state) => state.search.currentDetailId);
   const token = useSelector((state) => state.auth.token);
   const detailPageState = useSelector((state) => state.search.detailPageState);
-  const user = useSelector((state) => state.auth.user);
+
   const closeDetail = () => {
     dispatch(isDetail(false));
   };
@@ -19,15 +19,15 @@ function Detail() {
   const [reviews, setReviews] = useState([]);
 
   const [newReview, setNewReview] = useState({
-    id: currentDetailId, // Ensure this is set correctly
-    name: user,
+    id: currentDetailId,
+    name: "",
     comment: "",
   });
 
   useEffect(() => {
     if (detailPageState) {
       axios
-        .get(`http://localhost:8080/reviews?placeId=${currentDetailId}`)
+        .get(`http://localhost:8080/reviews?id=${currentDetailId}`)
         .then((response) => {
           setReviews(response.data);
         })
@@ -48,7 +48,7 @@ function Detail() {
 
   const handleAddReview = () => {
     if (newReview.name && newReview.comment) {
-      console.log("Sending new review:", newReview);
+      console.log("Sending new review:", newReview); // 디버깅용 로그
       axios
         .post("http://localhost:8080/review", newReview)
         .then((response) => {
@@ -56,7 +56,7 @@ function Detail() {
             ...reviews,
             {
               id: currentDetailId,
-              name: user,
+              name: newReview.name,
               comment: newReview.comment,
             },
           ]);
@@ -79,7 +79,6 @@ function Detail() {
       >
         X
       </button>
-      {/* 이미지 표시 영역 */}
       <div
         className="flex items-center justify-center h-48 bg-gray-200 bg-center bg-contain"
         style={{
@@ -92,8 +91,6 @@ function Detail() {
               : "none",
         }}
       ></div>
-
-      {/* 출발/도착 버튼 */}
       <div className="flex my-4 justify-end ">
         <button className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 mr-2">
           출발
@@ -102,21 +99,17 @@ function Detail() {
           도착
         </button>
       </div>
-
-      {/* 후기 */}
       <div className="mb-4">
         <h2 className="text-lg font-semibold">후기</h2>
         <div className="space-y-4">
           {reviews.map((review) => (
-            <div key={review.id} className="p-4 bg-gray-100 rounded-lg">
+            <div key={review._id} className="p-4 bg-gray-100 rounded-lg">
               <p className="text-sm font-semibold">{review.name}</p>
               <p className="text-gray-700">{review.comment}</p>
             </div>
           ))}
         </div>
       </div>
-
-      {/* 댓글 작성 */}
       {token && (
         <div className="mb-4">
           <h2 className="text-lg font-semibold">댓글 작성</h2>
@@ -127,7 +120,7 @@ function Detail() {
               placeholder="이름"
               value={newReview.name}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded hidden"
+              className="w-full p-2 border border-gray-300 rounded"
             />
             <textarea
               name="comment"
