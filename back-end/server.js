@@ -32,6 +32,7 @@ let db;
 let bookmarksCollection;
 let userInfoCollection;
 let currentUserCollection;
+let reviewCollection;
 
 client
   .connect()
@@ -41,6 +42,7 @@ client
     bookmarksCollection = db.collection("bookmark");
     userInfoCollection = db.collection("userinfo");
     currentUserCollection = db.collection("currnetuser");
+    reviewCollection = db.collection("review");
     app.listen(8080, () => {
       console.log("http://localhost:8080 에서 서버 실행중");
     });
@@ -48,6 +50,36 @@ client
   .catch((err) => {
     console.log(err);
   });
+
+app.get("/review/list:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const query = { name: userId };
+    const result = await reviewCollection.find(query).toArray();
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("데이터를 불러오는 중 오류가 발생했습니다.");
+  }
+});
+
+app.post("/review", async (req, res) => {
+  const { id, name, comment } = req.body;
+  if (!id || !name || !comment) {
+    return res.status(400).send("ID, Name and comment are required.");
+  }
+  try {
+    const response = await reviewCollection.insertOne({
+      id,
+      name,
+      comment,
+    });
+    res.status(201).send("Review added successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error adding the review");
+  }
+});
 
 app.get("/list", async (req, res) => {
   try {

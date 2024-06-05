@@ -8,6 +8,7 @@ export const searchSlice = createSlice({
     searchResult: [],
     searchDetailInfo: {},
     detailPageState: false,
+    currentDetailId: "",
   },
   reducers: {
     setSearchWord: (state, action) => {
@@ -28,6 +29,9 @@ export const searchSlice = createSlice({
     isDetail: (state, action) => {
       state.detailPageState = action.payload;
     },
+    setCurrentDetailId: (state, action) => {
+      state.currentDetailId = action.payload;
+    },
   },
 });
 
@@ -38,6 +42,7 @@ export const {
   setSearchResult,
   setSearchDetailInfo,
   isDetail,
+  setCurrentDetailId,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

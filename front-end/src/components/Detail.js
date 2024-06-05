@@ -1,15 +1,71 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isDetail } from "../features/search/searchSlice";
+import axios from "axios";
 
 function Detail() {
   const dispatch = useDispatch();
   const searchDetailInfo = useSelector(
     (state) => state.search.searchDetailInfo
   );
-  const searchResult = useSelector((state) => state.search.searchResult);
+  const currentDetailId = useSelector((state) => state.search.currentDetailId);
+  const token = useSelector((state) => state.auth.token);
+  const detailPageState = useSelector((state) => state.search.detailPageState);
+
   const closeDetail = () => {
     dispatch(isDetail(false));
+  };
+
+  const [reviews, setReviews] = useState([]);
+
+  const [newReview, setNewReview] = useState({
+    id: currentDetailId, // Ensure this is set correctly
+    name: "",
+    comment: "",
+  });
+
+  useEffect(() => {
+    if (detailPageState) {
+      axios
+        .get(`http://localhost:8080/reviews?placeId=${currentDetailId}`)
+        .then((response) => {
+          setReviews(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching reviews:", error);
+        });
+    }
+  }, [currentDetailId, detailPageState]);
+
+  useEffect(() => {
+    setNewReview((prevState) => ({ ...prevState, id: currentDetailId }));
+  }, [currentDetailId]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewReview({ ...newReview, [name]: value });
+  };
+
+  const handleAddReview = () => {
+    if (newReview.name && newReview.comment) {
+      console.log("Sending new review:", newReview);
+      axios
+        .post("http://localhost:8080/review", newReview)
+        .then((response) => {
+          setReviews([
+            ...reviews,
+            {
+              id: currentDetailId,
+              name: newReview.name,
+              comment: newReview.comment,
+            },
+          ]);
+          setNewReview({ id: currentDetailId, name: "", comment: "" });
+        })
+        .catch((error) => {
+          console.error("There was an error saving the review", error);
+        });
+    }
   };
 
   return (
@@ -50,10 +106,45 @@ function Detail() {
       {/* 후기 */}
       <div className="mb-4">
         <h2 className="text-lg font-semibold">후기</h2>
-        <p>"정말 좋아요!" - 홍길동</p>
-        <p>"분위기가 아늑해요." - 김철수</p>
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <div key={review.id} className="p-4 bg-gray-100 rounded-lg">
+              <p className="text-sm font-semibold">{review.name}</p>
+              <p className="text-gray-700">{review.comment}</p>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="mb-4">asdawfwaf</div>
+
+      {/* 댓글 작성 */}
+      {token && (
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold">댓글 작성</h2>
+          <div className="space-y-2">
+            <input
+              type="text"
+              name="name"
+              placeholder="이름"
+              value={newReview.name}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+            <textarea
+              name="comment"
+              placeholder="댓글"
+              value={newReview.comment}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+            <button
+              onClick={handleAddReview}
+              className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+            >
+              댓글 추가
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

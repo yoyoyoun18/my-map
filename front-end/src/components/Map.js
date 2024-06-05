@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   isDetail,
+  setCurrentDetailId,
   setIsAddressFalse,
   setIsAddressTrue,
   setSearchDetailInfo,
@@ -60,6 +61,7 @@ function Map() {
       .then((response) => {
         dispatch(isDetail(true));
         dispatch(setSearchDetailInfo(response.data));
+        dispatch(setCurrentDetailId(id));
       })
       .catch((error) => {
         console.error("요청 에러:", error);

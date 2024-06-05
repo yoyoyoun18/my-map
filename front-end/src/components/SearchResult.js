@@ -4,7 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { isDetail, setSearchDetailInfo } from "../features/search/searchSlice";
+import {
+  isDetail,
+  setCurrentDetailId,
+  setSearchDetailInfo,
+} from "../features/search/searchSlice";
 
 function SearchResult() {
   const dispatch = useDispatch();
@@ -18,6 +22,7 @@ function SearchResult() {
       .then((response) => {
         dispatch(isDetail(true));
         dispatch(setSearchDetailInfo(response.data));
+        dispatch(setCurrentDetailId(id));
       })
       .catch((error) => {
         console.error("요청 에러:", error);
