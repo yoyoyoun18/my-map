@@ -30,6 +30,7 @@ function Detail() {
         .get(`http://localhost:8080/reviews?id=${currentDetailId}`)
         .then((response) => {
           setReviews(response.data);
+          console.log(searchDetailInfo);
         })
         .catch((error) => {
           console.error("Error fetching reviews:", error);
@@ -48,7 +49,6 @@ function Detail() {
 
   const handleAddReview = () => {
     if (newReview.name && newReview.comment) {
-      console.log("Sending new review:", newReview); // 디버깅용 로그
       axios
         .post("http://localhost:8080/review", newReview)
         .then((response) => {
@@ -67,6 +67,7 @@ function Detail() {
         });
     }
   };
+
 
   return (
     <div
@@ -91,6 +92,11 @@ function Detail() {
               : "none",
         }}
       ></div>
+      <div className="text-left my-2 text-lg font-bold">
+        {searchDetailInfo
+          ? searchDetailInfo.basicInfo.placenamefull
+          : "장소 이름"}
+      </div>
       <div className="flex my-4 justify-end ">
         <button className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 mr-2">
           출발
