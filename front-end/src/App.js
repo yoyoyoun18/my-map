@@ -12,12 +12,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
 import { isToken, isName, isEmail } from "./features/auth/authSlice";
 import Login from "./components/Login";
+import { setSearchRouteMode } from "./features/mobility/mobilitySlice";
+import Mobility from "./components/Mobility";
 
 function App() {
   const dispatch = useDispatch();
   const bookmarks = useSelector((state) => state.bookmarks.items);
   const token = useSelector((state) => state.auth.token);
   const detailPageState = useSelector((state) => state.search.detailPageState);
+  const searchRouteMode = useSelector(
+    (state) => state.mobility.searchRouteMode
+  );
 
   useEffect(() => {
     axios
@@ -68,6 +73,7 @@ function App() {
                 <SearchResult />
               </div>
               {detailPageState && <Detail />}
+              {searchRouteMode && <Mobility />}
               <div className="flex-grow h-full">
                 <Map />
               </div>

@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isDetail } from "../features/search/searchSlice";
 import axios from "axios";
+import {
+  isArrive,
+  isDepart,
+  setSearchRouteMode,
+} from "../features/mobility/mobilitySlice";
 
 function Detail() {
   const dispatch = useDispatch();
@@ -68,6 +73,15 @@ function Detail() {
     }
   };
 
+  const handleDepartPlace = () => {
+    dispatch(isDepart(searchDetailInfo.basicInfo.placenamefull));
+    dispatch(setSearchRouteMode(true));
+  };
+
+  const handleArrivePlace = () => {
+    dispatch(isArrive(searchDetailInfo.basicInfo.placenamefull));
+    dispatch(setSearchRouteMode(true));
+  };
 
   return (
     <div
@@ -98,10 +112,16 @@ function Detail() {
           : "장소 이름"}
       </div>
       <div className="flex my-4 justify-end ">
-        <button className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 mr-2">
+        <button
+          className="px-4 py-2 font-bold text-black bg-none rounded hover:bg-gray-200 mr-2 border-black border"
+          onClick={handleDepartPlace}
+        >
           출발
         </button>
-        <button className="px-4 py-2 font-bold text-white bg-green-500 rounded hover:bg-green-700">
+        <button
+          className="px-4 py-2 font-bold text-black bg-none rounded hover:bg-gray-200 border-black border"
+          onClick={handleArrivePlace}
+        >
           도착
         </button>
       </div>
