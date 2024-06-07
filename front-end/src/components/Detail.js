@@ -120,7 +120,7 @@ function Detail() {
               placeholder="이름"
               value={newReview.name}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded hidden"
             />
             <textarea
               name="comment"
