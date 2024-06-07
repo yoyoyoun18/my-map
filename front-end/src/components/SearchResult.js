@@ -7,6 +7,9 @@ import axios from "axios";
 import {
   isDetail,
   setCurrentDetailId,
+  setCurrentTargetPlace,
+  setCurrentTargetPlaceX,
+  setCurrentTargetPlaceY,
   setSearchDetailInfo,
 } from "../features/search/searchSlice";
 
@@ -16,28 +19,33 @@ function SearchResult() {
   const searchDetailInfo = useSelector(
     (state) => state.search.searchDetailInfo
   );
-  const testSearchResultId = (id) => {
+  const searchResult = useSelector((state) => state.search.searchResult);
+  const testSearchResultId = (id, x, y) => {
     axios
       .get(`http://localhost:8080/api/data/${id}`)
       .then((response) => {
         dispatch(isDetail(true));
         dispatch(setSearchDetailInfo(response.data));
         dispatch(setCurrentDetailId(id));
+        dispatch(setCurrentTargetPlaceX(y));
+        dispatch(setCurrentTargetPlaceY(x));
       })
       .catch((error) => {
         console.error("요청 에러:", error);
       });
   };
 
-  const searchResult = useSelector((state) => state.search.searchResult);
   return (
     <div className="space-y-2">
       {searchResult.map((result, i) =>
         searchResult.length == 1 ? (
           <div
             key={i}
-            className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer" // 여기에 onClick
-            onClick={() => testSearchResultId(result.id)}
+            className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
+            onClick={() => {
+              console.log(result);
+              testSearchResultId(result.id, result.x, result.y);
+            }}
           >
             <div className="flex items-center space-x-2">
               {" "}
@@ -55,17 +63,17 @@ function SearchResult() {
               지번: {result.address_name}
             </p>
             <p className="text-sm text-gray-500">
-              도로명 주소: {result.road_address.address_name}
+              {/* 도로명 주소: {result.road_address.address_name} */}
             </p>
             <p className="text-sm text-gray-500">
-              우편 주소: {result.road_address.zone_no}
+              {/* 우편 주소: {result.road_address.zone_no} */}
             </p>
           </div>
         ) : (
           <div
             key={i}
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
-            onClick={() => testSearchResultId(result.id)}
+            onClick={() => testSearchResultId(result.id, result.x, result.y)}
           >
             <h4 className="font-semibold text-lg text-gray-800">
               {result.place_name}

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { setSearchRouteMode } from "../features/mobility/mobilitySlice";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 function Mobility() {
   const [isFocus, setIsFocus] = useState(""); // 어떤 버튼이 포커스 되었는지 저장
@@ -10,9 +11,40 @@ function Mobility() {
   };
   const arrive = useSelector((state) => state.mobility.arrive);
   const depart = useSelector((state) => state.mobility.depart);
+  const currentDepartPlaceX = useSelector(
+    (state) => state.mobility.currentDepartPlaceX
+  );
+  const currentArrivePlace = useSelector(
+    (state) => state.mobility.currentArrivePlace
+  );
+  //   const origin = `'${currentDepartPlace.x},${currentDepartPlace.y}'`;
+  //   const destination = `'${currentArrivePlace.x},${currentArrivePlace.y}'`;
+  const [route, setRoute] = useState(null);
+  const [error, setError] = useState(null);
+
   const closeRouteMode = () => {
     dispatch(setSearchRouteMode(false));
   };
+
+  useEffect(() => {
+    console.log(currentDepartPlaceX);
+  }, []);
+
+  //   const handleSearchRoute = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:8080/api/directions", {
+  //         params: {
+  //           origin,
+  //           destination,
+  //         },
+  //       });
+  //       setRoute(response.data);
+  //       setError(null);
+  //     } catch (err) {
+  //       setError(err.message);
+  //       setRoute(null);
+  //     }
+  //   };
   return (
     <div
       className="p-4 overflow-y-auto bg-white w-80 relative z-50"
@@ -45,7 +77,11 @@ function Mobility() {
             }`}
             onClick={() => handleFocus("origin")}
           >
-            {depart}
+            {!depart ? (
+              <span className="text-neutral-400">출발지를 선택해주세요.</span>
+            ) : (
+              depart
+            )}
           </button>
           <input name="destination" hidden readOnly value="" />
           <button
@@ -57,13 +93,17 @@ function Mobility() {
             }`}
             onClick={() => handleFocus("destination")}
           >
-            {/* <span className="text-neutral-400">도착지를 선택해주세요.</span> */}
-            {arrive}
+            {!arrive ? (
+              <span className="text-neutral-400">도착지를 선택해주세요.</span>
+            ) : (
+              arrive
+            )}
           </button>
         </div>
         <button
           type="submit"
           className="bg-interaction mt-2 rounded-full px-5 py-1 text-white bg-gray-900"
+          //   onClick={() => handleSearchRoute}
         >
           길찾기
         </button>

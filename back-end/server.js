@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 
 const app = express();
 const SECRET_KEY = "8qkN5pS9u1"; // JWT 시크릿 키
+const KAKAP_API_KEY = 'e7e7dfa8c85fd1f3b58f83ea40a23850';
 
 app.use(
   cors({
@@ -50,6 +51,31 @@ client
   .catch((err) => {
     console.log(err);
   });
+
+  app.get('/api/directions', async (req, res) => {
+    const { origin, destination } = req.query;  // 출발지와 도착지를 쿼리 파라미터로 받습니다.
+
+    if (!origin || !destination) {
+        return res.status(400).json({ error: 'origin and destination are required' });
+    }
+
+    try {
+        const response = await axios.get('https://apis-navi.kakaomobility.com/v1/waypoints/directions', {
+            headers: {
+                Authorization: `KakaoAK ${KAKAO_API_KEY}`
+            },
+            params: {
+                origin,          // 출발지 좌표 (예: '127.1086228,37.4012191')
+                destination,     // 도착지 좌표 (예: '127.0358738,37.5117263')
+                priority: 'fast' // 경로 우선순위 (예: 'fast', 'short', 'free', 'safe')
+            }
+        });
+
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 app.get("/reviews", async (req, res) => {
   try {

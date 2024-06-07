@@ -9,7 +9,12 @@ export const searchSlice = createSlice({
     searchDetailInfo: {},
     detailPageState: false,
     currentDetailId: "",
-    currentTargetPlace: "",
+    currentTargetPlaceX: null,
+    currentTargetPlaceY: null,
+    currentDepartPlaceX: null,
+    currentDepartPlaceY: null,
+    currentArrivePlaceX: null,
+    currentArrivePlaceY: null,
   },
   reducers: {
     setSearchWord: (state, action) => {
@@ -25,7 +30,7 @@ export const searchSlice = createSlice({
       state.searchResult = action.payload;
     },
     setSearchDetailInfo: (state, action) => {
-      state.searchDetailInfo = action.payload; // searchDetailInfo를 업데이트하는 리듀서
+      state.searchDetailInfo = action.payload;
     },
     isDetail: (state, action) => {
       state.detailPageState = action.payload;
@@ -33,8 +38,23 @@ export const searchSlice = createSlice({
     setCurrentDetailId: (state, action) => {
       state.currentDetailId = action.payload;
     },
-    setCurrentTargetPlace: (state, action) => {
-      state.currentTargetPlace = action.payload;
+    setCurrentTargetPlaceX: (state, action) => {
+      state.currentTargetPlaceX = action.payload;
+    },
+    setCurrentTargetPlaceY: (state, action) => {
+      state.currentTargetPlaceY = action.payload;
+    },
+    setCurrentDepartPlaceX: (state, action) => {
+      state.currentDepartPlaceX = action.payload;
+    },
+    setCurrentDepartPlaceY: (state, action) => {
+      state.currentDepartPlaceY = action.payload;
+    },
+    setCurrentArrivePlaceX: (state, action) => {
+      state.currentArrivePlaceX = action.payload;
+    },
+    setCurrentArrivePlaceY: (state, action) => {
+      state.currentArrivePlaceY = action.payload;
     },
   },
 });
@@ -47,7 +67,12 @@ export const {
   setSearchDetailInfo,
   isDetail,
   setCurrentDetailId,
-  setCurrentTargetPlace,
+  setCurrentTargetPlaceX,
+  setCurrentTargetPlaceY,
+  setCurrentDepartPlaceX,
+  setCurrentDepartPlaceY,
+  setCurrentArrivePlaceX,
+  setCurrentArrivePlaceY,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

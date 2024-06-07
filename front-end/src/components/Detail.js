@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { isDetail } from "../features/search/searchSlice";
+import {
+  isDetail,
+  setCurrentArrivePlace,
+  setCurrentArrivePlaceX,
+  setCurrentArrivePlaceY,
+  setCurrentDepartPlace,
+  setCurrentDepartPlaceX,
+  setCurrentDepartPlaceY,
+} from "../features/search/searchSlice";
 import axios from "axios";
 import {
   isArrive,
@@ -16,6 +24,12 @@ function Detail() {
   const currentDetailId = useSelector((state) => state.search.currentDetailId);
   const token = useSelector((state) => state.auth.token);
   const detailPageState = useSelector((state) => state.search.detailPageState);
+  const currentTargetPlaceX = useSelector(
+    (state) => state.search.currentTargetPlaceX
+  );
+  const currentTargetPlaceY = useSelector(
+    (state) => state.search.currentTargetPlaceY
+  );
 
   const closeDetail = () => {
     dispatch(isDetail(false));
@@ -35,7 +49,6 @@ function Detail() {
         .get(`http://localhost:8080/reviews?id=${currentDetailId}`)
         .then((response) => {
           setReviews(response.data);
-          console.log(searchDetailInfo);
         })
         .catch((error) => {
           console.error("Error fetching reviews:", error);
@@ -76,11 +89,15 @@ function Detail() {
   const handleDepartPlace = () => {
     dispatch(isDepart(searchDetailInfo.basicInfo.placenamefull));
     dispatch(setSearchRouteMode(true));
+    dispatch(setCurrentDepartPlaceX(currentTargetPlaceX));
+    dispatch(setCurrentDepartPlaceY(currentTargetPlaceY));
   };
 
   const handleArrivePlace = () => {
     dispatch(isArrive(searchDetailInfo.basicInfo.placenamefull));
     dispatch(setSearchRouteMode(true));
+    dispatch(setCurrentArrivePlaceX(currentTargetPlaceX));
+    dispatch(setCurrentArrivePlaceY(currentTargetPlaceY));
   };
 
   return (
@@ -114,13 +131,13 @@ function Detail() {
       <div className="flex my-4 justify-end ">
         <button
           className="px-4 py-2 font-bold text-black bg-none rounded hover:bg-gray-200 mr-2 border-black border"
-          onClick={handleDepartPlace}
+          onClick={() => handleDepartPlace()}
         >
           출발
         </button>
         <button
           className="px-4 py-2 font-bold text-black bg-none rounded hover:bg-gray-200 border-black border"
-          onClick={handleArrivePlace}
+          onClick={() => handleArrivePlace()}
         >
           도착
         </button>
