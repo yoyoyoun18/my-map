@@ -26,6 +26,12 @@ function Map() {
   const currentArrivePlaceY = useSelector(
     (state) => state.search.currentArrivePlaceY
   );
+  const currentTargetPlaceX = useSelector(
+    (state) => state.search.currentTargetPlaceX
+  );
+  const currentTargetPlaceY = useSelector(
+    (state) => state.search.currentTargetPlaceY
+  );
 
   const searchWord = useSelector((state) => state.search.searchWord);
   const searchCount = useSelector((state) => state.search.searchCount);
@@ -240,22 +246,41 @@ function Map() {
       const departMarker = new window.kakao.maps.Marker({
         map: map,
         position: new window.kakao.maps.LatLng(
-          currentDepartPlaceX,
-          currentDepartPlaceY
+          currentDepartPlaceY,
+          currentDepartPlaceX
         ),
       });
 
       const arriveMarker = new window.kakao.maps.Marker({
         map: map,
         position: new window.kakao.maps.LatLng(
-          currentArrivePlaceX,
-          currentArrivePlaceY
+          currentArrivePlaceY,
+          currentArrivePlaceX
         ),
       });
 
       setMarkers([departMarker, arriveMarker]); // 출발지와 도착지 마커 배열로 설정
     }
   }, [map, route]);
+
+  useEffect(() => {
+    if (map && currentTargetPlaceX && currentTargetPlaceY) {
+      markers.forEach((marker) => marker.setMap(null)); // 기존 마커 제거
+
+      const currentTargetMarker = new window.kakao.maps.Marker({
+        map: map,
+        position: new window.kakao.maps.LatLng(
+          currentTargetPlaceX,
+          currentTargetPlaceY
+        ),
+      });
+
+      setMarkers([currentTargetMarker]); // 새로운 마커 설정
+      map.setCenter(
+        new window.kakao.maps.LatLng(currentTargetPlaceX, currentTargetPlaceY)
+      );
+    }
+  }, [map, currentTargetPlaceX, currentTargetPlaceY]);
 
   return (
     <div className="relative h-full bg-gray-300">
