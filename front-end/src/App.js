@@ -69,7 +69,7 @@ function App() {
                 <Header />
                 <SearchBar />
                 {token && <MyInfo />}
-                <BookMark />
+                {token && <BookMark />}
                 <SearchResult />
               </div>
               {detailPageState && <Detail />}

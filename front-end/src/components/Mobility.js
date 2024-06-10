@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setSearchRouteMode } from "../features/mobility/mobilitySlice";
 import { setRoute } from "../features/route/routeSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Mobility() {
   const [isFocus, setIsFocus] = useState(""); // 어떤 버튼이 포커스 되었는지 저장
@@ -121,11 +123,16 @@ function Mobility() {
         <button
           type="submit"
           className="bg-interaction mt-2 rounded-full px-5 py-1 text-white bg-gray-900"
-          onClick={handleSearchRoute}
+          onClick={() =>
+            arrive && depart
+              ? handleSearchRoute()
+              : toast.warn("출발지, 도착지를 설정해주세요.")
+          }
         >
           길찾기
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 }

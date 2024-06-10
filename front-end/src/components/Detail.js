@@ -169,34 +169,38 @@ function Detail() {
           ))}
         </div>
       </div>
-      {token && (
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold">댓글 작성</h2>
-          <div className="space-y-2">
-            <input
-              type="text"
-              name="name"
-              placeholder="이름"
-              value={newReview.name}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded hidden"
-            />
-            <textarea
-              name="comment"
-              placeholder="댓글"
-              value={newReview.comment}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-            <button
-              onClick={handleAddReview}
-              className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-            >
-              댓글 추가
-            </button>
-          </div>
+
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold">댓글 작성</h2>
+        <div className="space-y-2">
+          <input
+            type="text"
+            name="name"
+            placeholder="이름"
+            value={newReview.name}
+            onChange={handleInputChange}
+            className="w-full p-2 border border-gray-300 rounded hidden"
+          />
+          <textarea
+            name="comment"
+            placeholder="댓글"
+            value={newReview.comment}
+            onChange={handleInputChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+          <button
+            onClick={() =>
+              token
+                ? handleAddReview()
+                : toast.warn("로그인 후 이용 가능합니다.")
+            }
+            className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+          >
+            댓글 추가
+          </button>
         </div>
-      )}
+      </div>
+
       <ToastContainer />
     </div>
   );
