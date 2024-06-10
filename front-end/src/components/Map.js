@@ -14,6 +14,19 @@ import axios from "axios";
 function Map() {
   const dispatch = useDispatch();
   const route = useSelector((state) => state.route.route); // route 상태를 구독
+  const currentDepartPlaceX = useSelector(
+    (state) => state.search.currentDepartPlaceX
+  );
+  const currentDepartPlaceY = useSelector(
+    (state) => state.search.currentDepartPlaceY
+  );
+  const currentArrivePlaceX = useSelector(
+    (state) => state.search.currentArrivePlaceX
+  );
+  const currentArrivePlaceY = useSelector(
+    (state) => state.search.currentArrivePlaceY
+  );
+
   const searchWord = useSelector((state) => state.search.searchWord);
   const searchCount = useSelector((state) => state.search.searchCount);
   const isAddress = useSelector((state) => state.search.isAddress);
@@ -208,6 +221,9 @@ function Map() {
   // 경로 데이터를 받아 경로를 그리는 함수
   useEffect(() => {
     if (map && route) {
+      // 기존 마커를 모두 제거
+      markers.forEach((marker) => marker.setMap(null));
+
       const linePath = route.map(
         (point) => new window.kakao.maps.LatLng(point.y, point.x)
       );
@@ -219,6 +235,25 @@ function Map() {
         strokeStyle: "solid",
       });
       polyline.setMap(map);
+
+      // 출발지와 도착지 마커 생성
+      const departMarker = new window.kakao.maps.Marker({
+        map: map,
+        position: new window.kakao.maps.LatLng(
+          currentDepartPlaceX,
+          currentDepartPlaceY
+        ),
+      });
+
+      const arriveMarker = new window.kakao.maps.Marker({
+        map: map,
+        position: new window.kakao.maps.LatLng(
+          currentArrivePlaceX,
+          currentArrivePlaceY
+        ),
+      });
+
+      setMarkers([departMarker, arriveMarker]); // 출발지와 도착지 마커 배열로 설정
     }
   }, [map, route]);
 

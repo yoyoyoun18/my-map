@@ -33,12 +33,6 @@ function Mobility() {
   };
 
   const handleSearchRoute = () => {
-    console.log("handleSearchRoute 호출됨");
-    console.log("currentDepartPlaceX:", currentDepartPlaceX);
-    console.log("currentDepartPlaceY:", currentDepartPlaceY);
-    console.log("currentArrivePlaceX:", currentArrivePlaceX);
-    console.log("currentArrivePlaceY:", currentArrivePlaceY);
-
     // 여기서 axios를 사용하여 경로 검색 API를 호출합니다.
     axios
       .get("https://apis-navi.kakaomobility.com/v1/directions", {
