@@ -45,6 +45,7 @@ function Map() {
   const [center, setCenter] = useState(null);
   const [loading, setLoading] = useState(false);
   const [myLocationCount, setMyLocationCount] = useState(0);
+  const [polyline, setPolyline] = useState(null);
 
   useEffect(() => {
     // 브라우저에서 위치 접근 권한 요청
@@ -227,20 +228,28 @@ function Map() {
   // 경로 데이터를 받아 경로를 그리는 함수
   useEffect(() => {
     if (map && route) {
+      // 추가: 기존 폴리라인 제거
+      if (polyline) {
+        polyline.setMap(null);
+      }
+
       // 기존 마커를 모두 제거
       markers.forEach((marker) => marker.setMap(null));
 
       const linePath = route.map(
         (point) => new window.kakao.maps.LatLng(point.y, point.x)
       );
-      const polyline = new window.kakao.maps.Polyline({
+      const newPolyline = new window.kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 5,
         strokeColor: "#FF0000",
         strokeOpacity: 0.7,
         strokeStyle: "solid",
       });
-      polyline.setMap(map);
+      newPolyline.setMap(map);
+
+      // 추가: 새로운 폴리라인 설정
+      setPolyline(newPolyline);
 
       // 출발지와 도착지 마커 생성
       const departMarker = new window.kakao.maps.Marker({
