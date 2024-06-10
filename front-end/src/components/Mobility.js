@@ -9,16 +9,22 @@ function Mobility() {
   const handleFocus = (target) => {
     setIsFocus(target); // 클릭된 버튼의 이름을 상태에 저장
   };
+
   const arrive = useSelector((state) => state.mobility.arrive);
   const depart = useSelector((state) => state.mobility.depart);
   const currentDepartPlaceX = useSelector(
-    (state) => state.mobility.currentDepartPlaceX
+    (state) => state.search.currentDepartPlaceX
   );
-  const currentArrivePlace = useSelector(
-    (state) => state.mobility.currentArrivePlace
+  const currentDepartPlaceY = useSelector(
+    (state) => state.search.currentDepartPlaceY
   );
-  //   const origin = `'${currentDepartPlace.x},${currentDepartPlace.y}'`;
-  //   const destination = `'${currentArrivePlace.x},${currentArrivePlace.y}'`;
+  const currentArrivePlaceX = useSelector(
+    (state) => state.search.currentArrivePlaceX
+  );
+  const currentArrivePlaceY = useSelector(
+    (state) => state.search.currentArrivePlaceY
+  );
+
   const [route, setRoute] = useState(null);
   const [error, setError] = useState(null);
 
@@ -26,25 +32,29 @@ function Mobility() {
     dispatch(setSearchRouteMode(false));
   };
 
-  useEffect(() => {
-    console.log(currentDepartPlaceX);
-  }, []);
+  const handleSearchRoute = () => {
+    console.log("currentDepartPlaceX:", currentDepartPlaceX);
+    console.log("currentDepartPlaceY:", currentDepartPlaceY);
+    console.log("currentArrivePlaceX:", currentArrivePlaceX);
+    console.log("currentArrivePlaceY:", currentArrivePlaceY);
 
-  //   const handleSearchRoute = async () => {
-  //     try {
-  //       const response = await axios.get("http://localhost:8080/api/directions", {
-  //         params: {
-  //           origin,
-  //           destination,
-  //         },
-  //       });
-  //       setRoute(response.data);
-  //       setError(null);
-  //     } catch (err) {
-  //       setError(err.message);
-  //       setRoute(null);
-  //     }
-  //   };
+    // 여기서 axios를 사용하여 경로 검색 API를 호출할 수 있습니다.
+    // axios.get('http://localhost:8080/api/directions', {
+    //   params: {
+    //     origin: `${currentDepartPlaceX},${currentDepartPlaceY}`,
+    //     destination: `${currentArrivePlaceX},${currentArrivePlaceY}`
+    //   }
+    // })
+    // .then(response => {
+    //   setRoute(response.data);
+    //   setError(null);
+    // })
+    // .catch(err => {
+    //   setError(err.message);
+    //   setRoute(null);
+    // });
+  };
+
   return (
     <div
       className="p-4 overflow-y-auto bg-white w-80 relative z-50"
@@ -103,7 +113,7 @@ function Mobility() {
         <button
           type="submit"
           className="bg-interaction mt-2 rounded-full px-5 py-1 text-white bg-gray-900"
-          //   onClick={() => handleSearchRoute}
+          onClick={handleSearchRoute}
         >
           길찾기
         </button>

@@ -30,6 +30,15 @@ function Detail() {
   const currentTargetPlaceY = useSelector(
     (state) => state.search.currentTargetPlaceY
   );
+  const currentArrivePlaceX = useSelector(
+    (state) => state.search.currentArrivePlaceX
+  );
+  const currentDepartPlaceX = useSelector(
+    (state) => state.search.currentDepartPlaceX
+  );
+  const currentArrivePlaceY = useSelector(
+    (state) => state.search.currentArrivePlaceY
+  );
 
   const closeDetail = () => {
     dispatch(isDetail(false));
@@ -131,13 +140,13 @@ function Detail() {
       <div className="flex my-4 justify-end ">
         <button
           className="px-4 py-2 font-bold text-black bg-none rounded hover:bg-gray-200 mr-2 border-black border"
-          onClick={() => handleDepartPlace()}
+          onClick={handleDepartPlace}
         >
           출발
         </button>
         <button
           className="px-4 py-2 font-bold text-black bg-none rounded hover:bg-gray-200 border-black border"
-          onClick={() => handleArrivePlace()}
+          onClick={handleArrivePlace}
         >
           도착
         </button>
