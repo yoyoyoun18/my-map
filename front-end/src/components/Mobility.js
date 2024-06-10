@@ -43,7 +43,7 @@ function Mobility() {
           destination: `${currentArrivePlaceY},${currentArrivePlaceX}`, // 위도, 경도 순서
         },
         headers: {
-          Authorization: `KakaoAK ed33b54cc0cad2e37c6b1c00423b5141`, // 발급받은 REST API 키를 사용합니다.
+          Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_API_KEY}`, // 발급받은 REST API 키를 사용합니다.
         },
       })
       .then((response) => {

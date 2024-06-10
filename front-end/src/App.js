@@ -61,7 +61,7 @@ function App() {
         <Route
           path="/"
           element={
-            <div className="flex flex-row h-screen">
+            <div className="flex flex-row h-screen font-sans">
               <div
                 className="p-4 overflow-y-auto bg-gray-100 w-96 relative z-50"
                 style={{ flexShrink: 0 }}

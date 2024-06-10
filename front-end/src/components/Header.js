@@ -36,9 +36,15 @@ function Header() {
       <h1 className="text-2xl font-semibold">My Map</h1>
       <div className="cursor-pointer text-2xl" onClick={handleLoginOut}>
         {token ? (
-          <FontAwesomeIcon icon={faSignOutAlt} />
+          <div className="flex justify-center items-center flex-col font-bold">
+            <FontAwesomeIcon icon={faSignOutAlt} />
+            <p className="text-xs">로그아웃</p>
+          </div>
         ) : (
-          <FontAwesomeIcon icon={faSignInAlt} />
+          <div className="flex justify-center items-center flex-col font-bold">
+            <FontAwesomeIcon icon={faSignInAlt} />
+            <p className="text-xs">로그인</p>
+          </div>
         )}
       </div>
     </div>

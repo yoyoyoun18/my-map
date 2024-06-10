@@ -6,10 +6,14 @@ const { MongoClient, ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+require("dotenv").config();
 
 const app = express();
-const SECRET_KEY = "8qkN5pS9u1"; // JWT 시크릿 키
-const KAKAP_API_KEY = "e7e7dfa8c85fd1f3b58f83ea40a23850";
+// const SECRET_KEY = "8qkN5pS9u1"; // JWT 시크릿 키
+// const KAKAP_API_KEY = "e7e7dfa8c85fd1f3b58f83ea40a23850";
+const DB_URL = process.env.DB_URL;
+const SECRET_KEY = process.env.SECRET_KEY;
+const KAKAO_API_KEY = process.env.KAKAO_API_KEY;
 
 app.use(
   cors({
@@ -25,9 +29,9 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(cookieParser());
 
-const url =
-  "mongodb+srv://admin:as123123@kpkpkp.cau2nx4.mongodb.net/?retryWrites=true&w=majority&appName=kpkpkp";
-const client = new MongoClient(url);
+// const url =
+//   "mongodb+srv://admin:as123123@kpkpkp.cau2nx4.mongodb.net/?retryWrites=true&w=majority&appName=kpkpkp";
+const client = new MongoClient(DB_URL);
 
 let db;
 let bookmarksCollection;

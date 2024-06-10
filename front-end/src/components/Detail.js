@@ -17,6 +17,7 @@ import {
 } from "../features/mobility/mobilitySlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Button } from "@mui/material";
 
 function Detail() {
   const dispatch = useDispatch();
@@ -188,16 +189,18 @@ function Detail() {
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
-          <button
+          <Button
             onClick={() =>
               token
                 ? handleAddReview()
                 : toast.warn("로그인 후 이용 가능합니다.")
             }
             className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+            variant="outlined"
+            disableElevation
           >
             댓글 추가
-          </button>
+          </Button>
         </div>
       </div>
 
