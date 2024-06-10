@@ -13,6 +13,7 @@ import axios from "axios";
 
 function Map() {
   const dispatch = useDispatch();
+  const route = useSelector((state) => state.route.route); // route 상태를 구독
   const searchWord = useSelector((state) => state.search.searchWord);
   const searchCount = useSelector((state) => state.search.searchCount);
   const isAddress = useSelector((state) => state.search.isAddress);
@@ -110,25 +111,6 @@ function Map() {
     }
   }, [searchWord, searchCount]);
 
-  // function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  //   var R = 6371; // 지구의 반경 (km)
-  //   var dLat = deg2rad(lat2 - lat1);
-  //   var dLon = deg2rad(lon2 - lon1);
-  //   var a =
-  //     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-  //     Math.cos(deg2rad(lat1)) *
-  //       Math.cos(deg2rad(lat2)) *
-  //       Math.sin(dLon / 2) *
-  //       Math.sin(dLon / 2);
-  //   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  //   var d = R * c; // 거리 (km)
-  //   return d * 1000; // 미터로 변환
-  // }
-
-  // function deg2rad(deg) {
-  //   return deg * (Math.PI / 180);
-  // }
-
   const handleSearch = () => {
     if (!map || !searchWord) return;
 
@@ -192,9 +174,7 @@ function Map() {
 
   // 장소를 표시하는 함수
   const displayPlaces = (places) => {
-    // console.log("Places data:", places);
     const newMarkers = places.map((place) => {
-      // console.log("Creating marker for:", place.y, place.x);
       const marker = new window.kakao.maps.Marker({
         map: map,
         position: new window.kakao.maps.LatLng(place.y, place.x),
@@ -219,12 +199,28 @@ function Map() {
     });
 
     setMarkers(newMarkers); // 여기서 마커 배열을 업데이트합니다.
-    // console.log(places[0].x);
     if (places.length > 0) {
       const newCenter = new window.kakao.maps.LatLng(places[0].y, places[0].x);
       map.setCenter(newCenter);
     }
   };
+
+  // 경로 데이터를 받아 경로를 그리는 함수
+  useEffect(() => {
+    if (map && route) {
+      const linePath = route.map(
+        (point) => new window.kakao.maps.LatLng(point.y, point.x)
+      );
+      const polyline = new window.kakao.maps.Polyline({
+        path: linePath,
+        strokeWeight: 5,
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.7,
+        strokeStyle: "solid",
+      });
+      polyline.setMap(map);
+    }
+  }, [map, route]);
 
   return (
     <div className="relative h-full bg-gray-300">

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { setSearchRouteMode } from "../features/mobility/mobilitySlice";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import { setSearchRouteMode } from "../features/mobility/mobilitySlice";
+import { setRoute } from "../features/route/routeSlice";
 
 function Mobility() {
   const [isFocus, setIsFocus] = useState(""); // 어떤 버튼이 포커스 되었는지 저장
@@ -25,7 +26,6 @@ function Mobility() {
     (state) => state.search.currentArrivePlaceY
   );
 
-  const [route, setRoute] = useState(null);
   const [error, setError] = useState(null);
 
   const closeRouteMode = () => {
@@ -33,26 +33,40 @@ function Mobility() {
   };
 
   const handleSearchRoute = () => {
+    console.log("handleSearchRoute 호출됨");
     console.log("currentDepartPlaceX:", currentDepartPlaceX);
     console.log("currentDepartPlaceY:", currentDepartPlaceY);
     console.log("currentArrivePlaceX:", currentArrivePlaceX);
     console.log("currentArrivePlaceY:", currentArrivePlaceY);
 
-    // 여기서 axios를 사용하여 경로 검색 API를 호출할 수 있습니다.
-    // axios.get('http://localhost:8080/api/directions', {
-    //   params: {
-    //     origin: `${currentDepartPlaceX},${currentDepartPlaceY}`,
-    //     destination: `${currentArrivePlaceX},${currentArrivePlaceY}`
-    //   }
-    // })
-    // .then(response => {
-    //   setRoute(response.data);
-    //   setError(null);
-    // })
-    // .catch(err => {
-    //   setError(err.message);
-    //   setRoute(null);
-    // });
+    // 여기서 axios를 사용하여 경로 검색 API를 호출합니다.
+    axios
+      .get("https://apis-navi.kakaomobility.com/v1/directions", {
+        params: {
+          origin: `${currentDepartPlaceY},${currentDepartPlaceX}`, // 위도, 경도 순서
+          destination: `${currentArrivePlaceY},${currentArrivePlaceX}`, // 위도, 경도 순서
+        },
+        headers: {
+          Authorization: `KakaoAK ed33b54cc0cad2e37c6b1c00423b5141`, // 발급받은 REST API 키를 사용합니다.
+        },
+      })
+      .then((response) => {
+        console.log("API 응답:", response);
+        const routes = response.data.routes;
+        if (routes && routes.length > 0 && routes[0].sections) {
+          dispatch(setRoute(routes[0].sections[0].guides)); // 경로 데이터 설정
+          setError(null);
+          console.log(routes[0].sections[0].guides);
+        } else {
+          setError("경로 데이터를 찾을 수 없습니다.");
+          dispatch(setRoute(null));
+        }
+      })
+      .catch((err) => {
+        console.error("API 호출 에러: ", err);
+        setError(err.message);
+        dispatch(setRoute(null));
+      });
   };
 
   return (
@@ -80,7 +94,7 @@ function Mobility() {
           />
           <button
             type="button"
-            className={`relative w-full cursor-pointer rounded-t border-b-[1px] p-2 text-left outline-none  ${
+            className={`relative w-full cursor-pointer rounded-t border-b-[1px] p-2 text-left outline-none ${
               isFocus === "origin"
                 ? "border-black border-2"
                 : "border-neutral-400"
