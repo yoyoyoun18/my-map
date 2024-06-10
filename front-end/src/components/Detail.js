@@ -147,13 +147,13 @@ function Detail() {
       </div>
       <div className="flex my-4 justify-end ">
         <button
-          className="px-4 py-2 font-bold text-black bg-none rounded hover:bg-gray-200 mr-2 border-black border"
+          className="relative flex mr-2 items-center hover:bg-gray-200 border bg-white p-2 shadow rounded-lg cursor-pointer"
           onClick={handleDepartPlace}
         >
           출발
         </button>
         <button
-          className="px-4 py-2 font-bold text-black bg-none rounded hover:bg-gray-200 border-black border"
+          className="relative flex items-center hover:bg-gray-200 border bg-white p-2 shadow rounded-lg cursor-pointer"
           onClick={handleArrivePlace}
         >
           도착
@@ -189,18 +189,16 @@ function Detail() {
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
-          <Button
+          <button
             onClick={() =>
               token
                 ? handleAddReview()
                 : toast.warn("로그인 후 이용 가능합니다.")
             }
-            className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-            variant="outlined"
-            disableElevation
+            className="w-full relative flex justify-center items-center hover:bg-gray-200 border bg-white p-2 shadow rounded-lg cursor-pointer"
           >
             댓글 추가
-          </Button>
+          </button>
         </div>
       </div>
 
