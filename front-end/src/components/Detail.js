@@ -15,6 +15,8 @@ import {
   isDepart,
   setSearchRouteMode,
 } from "../features/mobility/mobilitySlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Detail() {
   const dispatch = useDispatch();
@@ -23,6 +25,7 @@ function Detail() {
   );
   const currentDetailId = useSelector((state) => state.search.currentDetailId);
   const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
   const detailPageState = useSelector((state) => state.search.detailPageState);
   const currentTargetPlaceX = useSelector(
     (state) => state.search.currentTargetPlaceX
@@ -48,7 +51,7 @@ function Detail() {
 
   const [newReview, setNewReview] = useState({
     id: currentDetailId,
-    name: "",
+    name: user,
     comment: "",
   });
 
@@ -75,10 +78,12 @@ function Detail() {
   };
 
   const handleAddReview = () => {
+    console.log("Adding review:", user); // 로그 추가
     if (newReview.name && newReview.comment) {
       axios
         .post("http://localhost:8080/review", newReview)
         .then((response) => {
+          console.log("Review added successfully:", response); // 로그 추가
           setReviews([
             ...reviews,
             {
@@ -87,11 +92,13 @@ function Detail() {
               comment: newReview.comment,
             },
           ]);
-          setNewReview({ id: currentDetailId, name: "", comment: "" });
+          setNewReview({ id: currentDetailId, name: user, comment: "" });
         })
         .catch((error) => {
           console.error("There was an error saving the review", error);
         });
+    } else {
+      toast.warn("댓글 내용을 작성해주세요!");
     }
   };
 
@@ -190,6 +197,7 @@ function Detail() {
           </div>
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 }
