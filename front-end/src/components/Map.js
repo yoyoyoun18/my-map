@@ -10,7 +10,7 @@ import {
   setSearchWord,
 } from "../features/search/searchSlice";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Map() {
   const dispatch = useDispatch();
@@ -39,6 +39,7 @@ function Map() {
   const isAddress = useSelector((state) => state.search.isAddress);
   const searchResult = useSelector((state) => state.search.searchResult);
   const locations = ["편의점", "식당", "카페", "주차장", "마트"];
+  const location = useLocation();
   const [map, setMap] = useState(null);
   const [keyword, setKeyword] = useState();
   const [markers, setMarkers] = useState([]);
@@ -130,9 +131,16 @@ function Map() {
       markers.forEach((marker) => marker.setMap(null));
       handleSearch();
       setMarkers([]);
-      navigate(`/search/${searchWord}${searchCount}`);
+      navigate(`/search/${searchWord}`);
     }
   }, [searchWord, searchCount]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/search")) {
+      const id = decodeURIComponent(location.pathname.split("/search/")[1]);
+      dispatch(setSearchWord(id));
+    }
+  }, [location]);
 
   const handleSearch = () => {
     if (!map || !searchWord) return;
