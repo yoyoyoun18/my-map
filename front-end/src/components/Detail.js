@@ -18,9 +18,12 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@mui/material";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 function Detail() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { id } = useParams(); // URL 파라미터에서 id 가져오기
   const searchDetailInfo = useSelector(
     (state) => state.search.searchDetailInfo
   );
@@ -108,6 +111,7 @@ function Detail() {
     dispatch(setSearchRouteMode(true));
     dispatch(setCurrentDepartPlaceX(currentTargetPlaceX));
     dispatch(setCurrentDepartPlaceY(currentTargetPlaceY));
+    navigate(`/detail/mobility`);
   };
 
   const handleArrivePlace = () => {
@@ -115,6 +119,7 @@ function Detail() {
     dispatch(setSearchRouteMode(true));
     dispatch(setCurrentArrivePlaceX(currentTargetPlaceX));
     dispatch(setCurrentArrivePlaceY(currentTargetPlaceY));
+    navigate(`/detail/mobility`);
   };
 
   return (

@@ -10,6 +10,7 @@ import {
   setSearchWord,
 } from "../features/search/searchSlice";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Map() {
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ function Map() {
   const [loading, setLoading] = useState(false);
   const [myLocationCount, setMyLocationCount] = useState(0);
   const [polyline, setPolyline] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 브라우저에서 위치 접근 권한 요청
@@ -128,6 +130,7 @@ function Map() {
       markers.forEach((marker) => marker.setMap(null));
       handleSearch();
       setMarkers([]);
+      navigate(`/search/${searchWord}${searchCount}`);
     }
   }, [searchWord, searchCount]);
 

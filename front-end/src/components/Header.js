@@ -4,10 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignInAlt, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { isToken } from "../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLoginOut = async () => {
     if (token) {
@@ -31,9 +33,20 @@ function Header() {
     }
   };
 
+  const refreshHandler = () => {
+    window.location.href = "/";
+  };
+
   return (
-    <div className="flex justify-between items-center bg-gray-100 m-4 p-4">
-      <h1 className="text-2xl font-semibold">My Map</h1>
+    <div className="flex justify-between items-center bg-gray-100 m-4">
+      <h1
+        className="text-6xl font-semibold font-bebas cursor-pointer"
+        onClick={() => {
+          refreshHandler();
+        }}
+      >
+        MyMap
+      </h1>
       <div className="cursor-pointer text-2xl" onClick={handleLoginOut}>
         {token ? (
           <div className="flex justify-center items-center flex-col font-bold">

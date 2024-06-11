@@ -5,10 +5,12 @@ import { setSearchRouteMode } from "../features/mobility/mobilitySlice";
 import { setRoute } from "../features/route/routeSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 function Mobility() {
   const [isFocus, setIsFocus] = useState(""); // 어떤 버튼이 포커스 되었는지 저장
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleFocus = (target) => {
     setIsFocus(target); // 클릭된 버튼의 이름을 상태에 저장
   };
@@ -51,6 +53,9 @@ function Mobility() {
         const routes = response.data.routes;
         if (routes && routes.length > 0 && routes[0].sections) {
           dispatch(setRoute(routes[0].sections[0].guides)); // 경로 데이터 설정
+          navigate(
+            `/detail/mobility/${currentDepartPlaceX}${currentDepartPlaceY}${currentArrivePlaceX}${currentArrivePlaceY}`
+          );
           setError(null);
           console.log(routes[0].sections[0].guides);
         } else {

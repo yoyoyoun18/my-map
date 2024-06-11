@@ -12,28 +12,52 @@ import {
   setCurrentTargetPlaceY,
   setSearchDetailInfo,
 } from "../features/search/searchSlice";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 function SearchResult() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [currentURL, setCurrentURL] = useState("");
   const detailPageState = useSelector((state) => state.search.detailPageState);
   const searchDetailInfo = useSelector(
     (state) => state.search.searchDetailInfo
   );
   const searchResult = useSelector((state) => state.search.searchResult);
-  const testSearchResultId = (id, x, y) => {
+
+  const fetchDetailData = (id, x, y) => {
     axios
-      .get(`http://localhost:8080/api/data/${id}`)
+      .get(`http://localhost:8080/api/detail/${id}`)
       .then((response) => {
         dispatch(isDetail(true));
         dispatch(setSearchDetailInfo(response.data));
         dispatch(setCurrentDetailId(id));
         dispatch(setCurrentTargetPlaceX(y));
         dispatch(setCurrentTargetPlaceY(x));
+        navigate(`/detail/${id}`);
+        setCurrentURL(location);
       })
       .catch((error) => {
         console.error("요청 에러:", error);
       });
   };
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/detail")) {
+      const id = location.pathname.split("/detail/")[1];
+      axios
+        .get(`http://localhost:8080/api/detail/${id}`)
+        .then((response) => {
+          dispatch(isDetail(true));
+          dispatch(setSearchDetailInfo(response.data));
+          dispatch(setCurrentDetailId(id));
+          setCurrentURL(location);
+        })
+        .catch((error) => {
+          console.error("요청 에러:", error);
+        });
+    }
+  }, [location, dispatch]);
 
   return (
     <div className="space-y-2">
@@ -44,7 +68,7 @@ function SearchResult() {
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
             onClick={() => {
               console.log(result);
-              testSearchResultId(result.id, result.x, result.y);
+              fetchDetailData(result.id, result.x, result.y);
             }}
           >
             <div className="flex items-center space-x-2">
@@ -73,7 +97,7 @@ function SearchResult() {
           <div
             key={i}
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
-            onClick={() => testSearchResultId(result.id, result.x, result.y)}
+            onClick={() => fetchDetailData(result.id, result.x, result.y)}
           >
             <h4 className="font-semibold text-lg text-gray-800">
               {result.place_name}

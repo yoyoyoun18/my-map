@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Detail from "./components/Detail";
 import Header from "./components/Header";
 import Map from "./components/Map";
@@ -7,22 +7,21 @@ import SearchBar from "./components/SearchBar";
 import SearchResult from "./components/SearchResult";
 import BookMark from "./components/BookMark";
 import axios from "axios";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
-import { isToken, isName, isEmail } from "./features/auth/authSlice";
+import { isToken } from "./features/auth/authSlice";
 import Login from "./components/Login";
 import { setSearchRouteMode } from "./features/mobility/mobilitySlice";
 import Mobility from "./components/Mobility";
 
 function App() {
   const dispatch = useDispatch();
-  const bookmarks = useSelector((state) => state.bookmarks.items);
-  const token = useSelector((state) => state.auth.token);
-  const detailPageState = useSelector((state) => state.search.detailPageState);
-  const searchRouteMode = useSelector(
-    (state) => state.mobility.searchRouteMode
-  );
 
   useEffect(() => {
     axios
@@ -57,31 +56,40 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* <Route path="/login" element={<Login />} /> */}
-        <Route
-          path="/"
-          element={
-            <div className="flex flex-row h-screen font-sans">
-              <div
-                className="p-4 overflow-y-auto bg-gray-100 w-96 relative z-50"
-                style={{ flexShrink: 0 }}
-              >
-                <Header />
-                <SearchBar />
-                {token && <MyInfo />}
-                {token && <BookMark />}
-                <SearchResult />
-              </div>
-              {detailPageState && <Detail />}
-              {searchRouteMode && <Mobility />}
-              <div className="flex-grow h-full">
-                <Map />
-              </div>
-            </div>
-          }
-        />
+        <Route path="/*" element={<MainComponent />} />
       </Routes>
     </Router>
+  );
+}
+
+function MainComponent() {
+  const token = useSelector((state) => state.auth.token);
+  const detailPageState = useSelector((state) => state.search.detailPageState);
+  const searchRouteMode = useSelector(
+    (state) => state.mobility.searchRouteMode
+  );
+  const location = useLocation();
+
+  return (
+    <div className="flex flex-row h-screen font-sans">
+      <div
+        className="p-4 overflow-y-auto bg-gray-100 w-96 relative z-50"
+        style={{ flexShrink: 0 }}
+      >
+        <Header />
+        <SearchBar />
+        {token && <MyInfo />}
+        {token && <BookMark />}
+        <SearchResult />
+      </div>
+      {detailPageState && location.pathname.startsWith("/detail") && <Detail />}
+      {searchRouteMode &&
+        (location.pathname.startsWith("/detail/mobility") ||
+          location.pathname.startsWith("/detail")) && <Mobility />}
+      <div className="flex-grow h-full">
+        <Map />
+      </div>
+    </div>
   );
 }
 

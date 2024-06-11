@@ -213,7 +213,7 @@ app.get("/", (req, res) => {
   res.send(data);
 });
 
-app.get("/api/data/:id", async (req, res) => {
+app.get("/api/detail/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const response = await axios.get(
