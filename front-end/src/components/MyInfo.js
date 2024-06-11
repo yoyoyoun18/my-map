@@ -1,28 +1,36 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { isEmail, isName } from "../features/auth/authSlice";
+import { isEmail, isName, isPicture } from "../features/auth/authSlice";
 
 function MyInfo() {
   const myName = useSelector((state) => state.auth.user);
   const myEmail = useSelector((state) => state.auth.email);
+  const myPicture = useSelector((state) => state.auth.picture);
   const dispatch = useDispatch();
   const userInfo = {
-    image: "https://example.com/path-to-your-image.jpg", // 사용자 이미지 URL
+    image: myPicture, // 사용자 이미지 URL
     nickname: myName,
     email: myEmail,
   };
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/myinfo`)
-      .then((response) => {
-        dispatch(isName(response.data[0].name));
-        dispatch(isEmail(response.data[0].email));
-      })
-      .catch((error) => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/myinfo`);
+        const { existingUsers } = response.data;
+        console.log(response.data);
+        if (existingUsers.length > 0) {
+          dispatch(isName(existingUsers[0].name));
+          dispatch(isEmail(existingUsers[0].email));
+          dispatch(isPicture(existingUsers[0].profileImageUrl));
+        }
+      } catch (error) {
         console.error("Error fetching data:", error);
-      });
-  }, [dispatch]);
+      }
+    };
+
+    fetchUserInfo();
+  }, [dispatch, myName]);
 
   return (
     <div className="flex items-center space-x-4 p-4 bg-white shadow-md rounded-lg mb-4">
@@ -30,7 +38,7 @@ function MyInfo() {
       <div
         className="flex-shrink-0 w-20 h-20 rounded-full bg-gray-200"
         style={{
-          // backgroundImage: `url(${userInfo.image})`,
+          backgroundImage: `url(${myPicture})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

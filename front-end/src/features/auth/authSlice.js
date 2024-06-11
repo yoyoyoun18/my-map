@@ -5,6 +5,7 @@ const initialState = {
   email: null,
   isLoggedIn: true, // 로그인 상태
   token: false, // 인증 토큰
+  picture: null,
 };
 
 const authSlice = createSlice({
@@ -30,8 +31,12 @@ const authSlice = createSlice({
     isEmail: (state, action) => {
       state.email = action.payload;
     },
+    isPicture: (state, action) => {
+      state.picture = action.payload;
+    },
   },
 });
 
-export const { login, logout, isToken, isName, isEmail } = authSlice.actions;
+export const { login, logout, isToken, isName, isEmail, isPicture } =
+  authSlice.actions;
 export default authSlice.reducer;

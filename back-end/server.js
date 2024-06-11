@@ -311,15 +311,29 @@ app.post("/login", async (req, res) => {
     // currentUserCollection에 사용자 정보를 업데이트 또는 삽입합니다.
     const response = await currentUserCollection.updateOne(
       { name: user.name }, // 조건: 이름이 일치하는 사용자
-      { $set: { name: user.name, email: user.email } }, // 업데이트할 내용
+      {
+        $set: {
+          name: user.name,
+          email: user.email,
+          profileImageUrl: user.profileImageUrl,
+        },
+      }, // 업데이트할 내용
       { upsert: true } // 조건에 맞는 문서가 없으면 새로 삽입
     );
 
     console.log("currentUserCollection response:", response); // 디버깅 로그
 
-    const token = jwt.sign({ name: user.name, email: user.email }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      {
+        name: user.name,
+        email: user.email,
+        profileImageUrl: user.profileImageUrl,
+      },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -393,7 +407,7 @@ app.get("/myinfo", async (req, res) => {
     // 필터를 사용하여 MongoDB 컬렉션에서 데이터 가져옴
     let existingUsers = await currentUserCollection.find(filter).toArray();
 
-    res.send(existingUsers);
+    res.send({ existingUsers });
   } catch (error) {
     console.error(error);
 
