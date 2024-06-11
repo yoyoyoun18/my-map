@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
@@ -6,14 +7,26 @@ const { MongoClient, ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-require("dotenv").config();
+
+const multer = require("multer");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { Upload } = require("@aws-sdk/lib-storage");
 
 const app = express();
-// const SECRET_KEY = "8qkN5pS9u1"; // JWT 시크릿 키
-// const KAKAP_API_KEY = "e7e7dfa8c85fd1f3b58f83ea40a23850";
+
 const DB_URL = process.env.DB_URL;
 const SECRET_KEY = process.env.SECRET_KEY;
 const KAKAO_API_KEY = process.env.KAKAO_API_KEY;
+
+const region = "ap-northeast-2";
+
+const s3 = new S3Client({
+  region: region,
+  credentials: {
+    accessKeyId: process.env.ACCESS_KEY_ID,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  },
+});
 
 app.use(
   cors({
@@ -22,15 +35,14 @@ app.use(
   })
 );
 
-app.use(express.static(__dirname + "/public"));
+app.use("/public", express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(cookieParser());
 
-// const url =
-//   "mongodb+srv://admin:as123123@kpkpkp.cau2nx4.mongodb.net/?retryWrites=true&w=majority&appName=kpkpkp";
 const client = new MongoClient(DB_URL);
 
 let db;
@@ -55,6 +67,35 @@ client
   .catch((err) => {
     console.log(err);
   });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+app.post("/upload", upload.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const fileName = Date.now().toString() + path.extname(req.file.originalname);
+  const params = {
+    Bucket: "kimyoungjoforum1557",
+    Key: fileName,
+    Body: req.file.buffer,
+    ContentType: req.file.mimetype,
+  };
+
+  try {
+    await s3.send(new PutObjectCommand(params));
+    const fileUrl = `https://${params.Bucket}.s3.${region}.amazonaws.com/${params.Key}`;
+    res.json({
+      message: "File uploaded successfully!",
+      fileUrl: fileUrl,
+    });
+  } catch (error) {
+    console.error("File upload failed:", error);
+    res.status(500).json({ error: "Failed to upload file" });
+  }
+});
 
 app.get("/api/directions", async (req, res) => {
   const { origin, destination } = req.query; // 출발지와 도착지를 쿼리 파라미터로 받습니다.
@@ -193,12 +234,18 @@ app.get("/register", (req, res) => {
   res.render("register");
 });
 
-app.post("/register/submit", async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
-  if (!name || !password || !email || !confirmPassword) {
+app.post("/register/submit", upload.none(), async (req, res) => {
+  const { name, email, password, confirmPassword, profileImageUrl } = req.body;
+
+  // 요청 데이터 로그 출력
+  console.log("Received data:", req.body);
+
+  if (!name || !password || !email || !confirmPassword || !profileImageUrl) {
+    console.error("필수 필드가 누락되었습니다.");
     return res.status(400).send("모든 필드를 입력해주세요.");
   }
   if (password !== confirmPassword) {
+    console.error("비밀번호가 일치하지 않습니다.");
     return res.status(400).send("비밀번호가 일치하지 않습니다.");
   }
 
@@ -214,11 +261,17 @@ app.post("/register/submit", async (req, res) => {
       "Number of existing users with the same name:",
       existingUsers.length
     );
+    console.log(
+      "Number of existing users with the same email:",
+      existingUsersEmail.length
+    );
 
     // 이미 같은 이름의 사용자가 있는 경우 처리
     if (existingUsers.length > 0) {
+      console.error("이미 존재하는 사용자 이름입니다.");
       return res.status(400).send("이미 존재하는 사용자 이름입니다.");
     } else if (existingUsersEmail.length > 0) {
+      console.error("이미 존재하는 사용자 이메일입니다.");
       return res.status(400).send("이미 존재하는 사용자 이메일입니다.");
     }
 
@@ -226,10 +279,12 @@ app.post("/register/submit", async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      profileImageUrl, // 프로필 이미지 URL 저장
     });
-    res.redirect(303, "http://localhost:3000/");
+    console.log("User inserted:", response);
+    res.redirect(303, "/login");
   } catch (error) {
-    console.error(error);
+    console.error("Error adding the user:", error);
     res.status(500).send("Error adding the user");
   }
 });
