@@ -38,7 +38,7 @@ function BookMark() {
     } else {
       dispatch(setBookmarks(""));
     }
-  }, [token, myName, dispatch, bookmarks]);
+  }, [token, myName, dispatch]);
 
   const handleSubmit = (event) => {
     event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
@@ -49,7 +49,7 @@ function BookMark() {
     };
 
     axios
-      .post("http://localhost:8080/mybookmark", bookmarkData)
+      .post(`http://localhost:8080/mybookmark?userName=${myName}`, bookmarkData)
       .then((response) => {
         dispatch(addBookmark(bookmarkData));
         setBookmarkName(""); // 폼 필드 초기화

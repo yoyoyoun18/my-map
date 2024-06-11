@@ -418,7 +418,11 @@ app.get("/myinfo", async (req, res) => {
 
 app.post("/mybookmark", async (req, res) => {
   const { bookmark_name, bookmark_address } = req.body; // 클라이언트로부터 bookmark 데이터를 받습니다.
-  const userName = "admin123"; // 업데이트할 사용자의 이름
+  const userName = req.query; // 쿼리 파라미터로부터 userName을 가져옵니다.
+
+  if (!userName) {
+    return res.status(400).send("userName이 필요합니다.");
+  }
 
   try {
     // 사용자 정보를 가져옵니다.

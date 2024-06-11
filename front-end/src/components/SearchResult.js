@@ -42,6 +42,10 @@ function SearchResult() {
       });
   };
 
+  const detailData = () => {
+    dispatch(isDetail(true));
+  };
+
   useEffect(() => {
     if (location.pathname.startsWith("/detail")) {
       const id = location.pathname.split("/detail/")[1];
@@ -68,7 +72,7 @@ function SearchResult() {
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
             onClick={() => {
               console.log(result);
-              fetchDetailData(result.id, result.x, result.y);
+              detailData();
             }}
           >
             <div className="flex items-center space-x-2">
