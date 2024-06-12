@@ -90,25 +90,29 @@ function SearchResult() {
           >
             <div className="flex items-center space-x-2">
               {" "}
-              {/* Flex 컨테이너 */}
-              <FontAwesomeIcon
-                icon={faHome}
-                className="text-blue-800 align-middle icon-size"
-              />{" "}
               {/* 아이콘 */}
               <h4 className="font-semibold text-lg text-blue-800 align-middle">
                 {result.place_name}
               </h4>
             </div>
-            <p className="text-xl font-bold text-gray-800">
-              지번: {result.address_name}
-            </p>
-            <p className="text-sm text-gray-500">
-              {/* 도로명 주소: {result.road_address.address_name} */}
-            </p>
-            <p className="text-sm text-gray-500">
-              {/* 우편 주소: {result.road_address.zone_no} */}
-            </p>
+            <p className="text-lg text-blue-500">{result.address_name}</p>
+            <div className="flex items-center space-x-2">
+              <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
+                도로명
+              </div>
+              <p className="text-xs text-gray-500">
+                {result.road_address.address_name}
+              </p>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
+                우
+              </div>
+              <p className="text-xs text-gray-500">
+                {result.road_address.zone_no}
+              </p>
+            </div>
           </div>
         ) : (
           <div
@@ -117,12 +121,21 @@ function SearchResult() {
             // onClick={() => fetchDetailData(result.id, result.x, result.y)}
             onClick={() => fetchDetailData(result.id, result.x, result.y)}
           >
-            <h4 className="font-semibold text-lg text-gray-800">
-              {result.place_name}
-            </h4>
-            <p className="text-gray-500">주소: {result.address_name}</p>
+            <h4 className=" text-lg text-blue-500">{result.place_name}</h4>
+
+            <div className="flex items-center space-x-2">
+              <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
+                주소
+              </div>
+              <p className="text-gray-500">{result.address_name}</p>
+            </div>
             {!result.phone == "" && (
-              <p className="text-gray-500">전화번호: {result.phone}</p>
+              <div className="flex items-center space-x-2">
+                <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
+                  전화번호
+                </div>
+                <p className="text-gray-500">{result.phone}</p>
+              </div>
             )}
           </div>
         )

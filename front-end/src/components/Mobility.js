@@ -77,7 +77,7 @@ function Mobility() {
     >
       <button
         onClick={closeRouteMode}
-        className="absolute top-2 right-2 z-50 p-2 bg-white text-gray-700 rounded-full text-xl font-bold"
+        className="absolute top-2 right-2 z-50 pl-1 pr-1 bg-white text-gray-700 text-xl font-bold w-auto h-auto"
       >
         X
       </button>
@@ -125,17 +125,19 @@ function Mobility() {
             )}
           </button>
         </div>
-        <button
-          type="submit"
-          className="bg-interaction mt-2 rounded-full px-5 py-1 text-white bg-gray-900"
-          onClick={() =>
-            arrive && depart
-              ? handleSearchRoute()
-              : toast.warn("출발지, 도착지를 설정해주세요.")
-          }
-        >
-          길찾기
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="bg-interaction mt-2 rounded-full px-5 py-1 text-white bg-gray-900"
+            onClick={() =>
+              arrive && depart
+                ? handleSearchRoute()
+                : toast.warn("출발지, 도착지를 설정해주세요.")
+            }
+          >
+            길찾기
+          </button>
+        </div>
       </div>
       <ToastContainer />
     </div>

@@ -133,7 +133,7 @@ function Detail() {
     >
       <button
         onClick={closeDetail}
-        className="absolute top-2 right-2 z-50 p-2 bg-white text-gray-700 rounded-full text-xl font-bold"
+        className="absolute top-2 right-2 z-50 pl-1 pr-1 bg-white text-gray-700 text-xl font-bold w-auto h-auto"
       >
         X
       </button>
