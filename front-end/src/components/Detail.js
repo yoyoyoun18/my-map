@@ -107,7 +107,9 @@ function Detail() {
   };
 
   const handleDepartPlace = () => {
-    dispatch(isDepart(searchDetailInfo.basicInfo.placenamefull));
+    dispatch(
+      isDepart(searchDetailInfo?.basicInfo?.placenamefull ?? searchDetailInfo)
+    );
     dispatch(setSearchRouteMode(true));
     dispatch(setCurrentDepartPlaceX(currentTargetPlaceX));
     dispatch(setCurrentDepartPlaceY(currentTargetPlaceY));
@@ -115,7 +117,9 @@ function Detail() {
   };
 
   const handleArrivePlace = () => {
-    dispatch(isArrive(searchDetailInfo.basicInfo.placenamefull));
+    dispatch(
+      isArrive(searchDetailInfo?.basicInfo?.placenamefull ?? searchDetailInfo)
+    );
     dispatch(setSearchRouteMode(true));
     dispatch(setCurrentArrivePlaceX(currentTargetPlaceX));
     dispatch(setCurrentArrivePlaceY(currentTargetPlaceY));
@@ -142,13 +146,11 @@ function Detail() {
             searchDetailInfo.photo.photoList[0] &&
             searchDetailInfo.photo.photoList[0].list[0]
               ? `url(${searchDetailInfo.photo.photoList[0].list[0].orgurl})`
-              : "none",
+              : `url(https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/default.png)`,
         }}
       ></div>
       <div className="text-left my-2 text-lg font-bold">
-        {searchDetailInfo
-          ? searchDetailInfo.basicInfo.placenamefull
-          : "장소 이름"}
+        {searchDetailInfo?.basicInfo?.placenamefull ?? searchDetailInfo}
       </div>
       <div className="flex my-4 justify-end ">
         <button
@@ -164,48 +166,55 @@ function Detail() {
           도착
         </button>
       </div>
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">후기</h2>
-        <div className="space-y-4">
-          {reviews.map((review) => (
-            <div key={review._id} className="p-4 bg-gray-100 rounded-lg">
-              <p className="text-sm font-semibold">{review.name}</p>
-              <p className="text-gray-700">{review.comment}</p>
+      {searchDetailInfo?.basicInfo?.placenamefull && (
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold">후기</h2>
+          <div className="space-y-4 mb-4 mt-4">
+            {reviews.length > 0 ? (
+              reviews.map((review) => (
+                <div key={review._id} className="p-4 bg-gray-100 rounded-lg">
+                  <p className="text-sm font-semibold">{review.name}</p>
+                  <p className="text-gray-700">{review.comment}</p>
+                </div>
+              ))
+            ) : (
+              <div className="p-4 bg-gray-100 rounded-lg">
+                <p className="text-gray-700">후기를 작성해주세요!</p>
+              </div>
+            )}
+          </div>
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold">후기 작성</h2>
+            <div className="space-y-2">
+              <input
+                type="text"
+                name="name"
+                placeholder="이름"
+                value={newReview.name}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded hidden"
+              />
+              <textarea
+                name="comment"
+                placeholder="후기"
+                value={newReview.comment}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+              <button
+                onClick={() =>
+                  token
+                    ? handleAddReview()
+                    : toast.warn("로그인 후 이용 가능합니다.")
+                }
+                className="w-full relative flex justify-center items-center hover:bg-gray-200 border bg-white p-2 shadow rounded-lg cursor-pointer"
+              >
+                후기 추가
+              </button>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
-
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">댓글 작성</h2>
-        <div className="space-y-2">
-          <input
-            type="text"
-            name="name"
-            placeholder="이름"
-            value={newReview.name}
-            onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded hidden"
-          />
-          <textarea
-            name="comment"
-            placeholder="댓글"
-            value={newReview.comment}
-            onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-          <button
-            onClick={() =>
-              token
-                ? handleAddReview()
-                : toast.warn("로그인 후 이용 가능합니다.")
-            }
-            className="w-full relative flex justify-center items-center hover:bg-gray-200 border bg-white p-2 shadow rounded-lg cursor-pointer"
-          >
-            댓글 추가
-          </button>
-        </div>
-      </div>
+      )}
 
       <ToastContainer />
     </div>

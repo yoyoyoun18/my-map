@@ -19,6 +19,11 @@ function SearchResult() {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentURL, setCurrentURL] = useState("");
+  const [basicInfo, setBasicInfo] = useState({
+    basicInfo: {
+      placenamefull: null,
+    },
+  });
   const detailPageState = useSelector((state) => state.search.detailPageState);
   const searchDetailInfo = useSelector(
     (state) => state.search.searchDetailInfo
@@ -36,14 +41,22 @@ function SearchResult() {
         dispatch(setCurrentTargetPlaceY(x));
         navigate(`/detail/${id}`);
         setCurrentURL(location);
+        console.log(response.data);
       })
       .catch((error) => {
         console.error("요청 에러:", error);
       });
   };
 
-  const detailData = () => {
+  const detailData = (address_name) => {
+    const data = {
+      basicInfo: {
+        placenamefull: address_name,
+      },
+    };
     dispatch(isDetail(true));
+    navigate(`/detail/${address_name}`);
+    dispatch(setSearchDetailInfo(address_name));
   };
 
   useEffect(() => {
@@ -72,7 +85,7 @@ function SearchResult() {
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
             onClick={() => {
               console.log(result);
-              detailData();
+              detailData(result.address_name, result);
             }}
           >
             <div className="flex items-center space-x-2">
@@ -101,6 +114,7 @@ function SearchResult() {
           <div
             key={i}
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
+            // onClick={() => fetchDetailData(result.id, result.x, result.y)}
             onClick={() => fetchDetailData(result.id, result.x, result.y)}
           >
             <h4 className="font-semibold text-lg text-gray-800">
