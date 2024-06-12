@@ -40,9 +40,12 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/check-auth", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "http://192.168.20.146:8080/check-auth",
+          {
+            withCredentials: true,
+          }
+        );
         dispatch(isToken({ token: response.data.authenticated }));
       } catch (error) {
         dispatch(isToken({ token: false }));

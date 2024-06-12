@@ -27,11 +27,19 @@ const s3 = new S3Client({
     secretAccessKey: process.env.SECRET_ACCESS_KEY,
   },
 });
+const port = 8080;
+
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000", // React 애플리케이션의 출처
+//     credentials: true, // 쿠키를 허용하도록 설정
+//   })
+// );
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // React 애플리케이션의 출처
-    credentials: true, // 쿠키를 허용하도록 설정
+    origin: "http://192.168.20.146:3000", // React 애플리케이션의 주소
+    credentials: true,
   })
 );
 
@@ -60,8 +68,8 @@ client
     userInfoCollection = db.collection("userinfo");
     currentUserCollection = db.collection("currnetuser");
     reviewCollection = db.collection("review");
-    app.listen(8080, () => {
-      console.log("http://localhost:8080 에서 서버 실행중");
+    app.listen(port, "0.0.0.0", () => {
+      console.log(`Example app listening at http://0.0.0.0:${port}`);
     });
   })
   .catch((err) => {
@@ -240,7 +248,7 @@ app.post("/register/submit", upload.none(), async (req, res) => {
   // 요청 데이터 로그 출력
   console.log("Received data:", req.body);
 
-  if (!name || !password || !email || !confirmPassword || !profileImageUrl) {
+  if (!name || !password || !email || !confirmPassword) {
     console.error("필수 필드가 누락되었습니다.");
     return res.status(400).send("모든 필드를 입력해주세요.");
   }
@@ -342,7 +350,7 @@ app.post("/login", async (req, res) => {
     });
 
     // 로그인 성공 시 리다이렉션
-    res.redirect("http://localhost:3000/");
+    res.redirect("http://192.168.20.146:3000/");
   } catch (error) {
     console.error(error);
     res.status(500).send("로그인 처리 중 오류가 발생했습니다.");

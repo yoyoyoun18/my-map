@@ -15,7 +15,7 @@ function Header() {
     if (token) {
       try {
         await axios.post(
-          "http://localhost:8080/logout",
+          "http://192.168.20.146:8080/logout",
           {},
           { withCredentials: true }
         );
@@ -26,7 +26,7 @@ function Header() {
       }
     } else {
       try {
-        window.location.href = "http://localhost:8080/login";
+        window.location.href = "http://192.168.20.146:8080/login";
       } catch (error) {
         console.error("Login failed", error);
       }
