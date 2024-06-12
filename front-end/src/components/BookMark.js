@@ -55,6 +55,7 @@ function BookMark() {
         setBookmarkName(""); // 폼 필드 초기화
         setBookmarkAddress(""); // 폼 필드 초기화
         handleModal();
+        console.log(myName);
       })
       .catch((error) => {
         console.error("There was an error saving the bookmark", error);

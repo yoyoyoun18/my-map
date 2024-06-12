@@ -418,7 +418,7 @@ app.get("/myinfo", async (req, res) => {
 
 app.post("/mybookmark", async (req, res) => {
   const { bookmark_name, bookmark_address } = req.body; // 클라이언트로부터 bookmark 데이터를 받습니다.
-  const userName = req.query; // 쿼리 파라미터로부터 userName을 가져옵니다.
+  const { userName } = req.query; // 쿼리 파라미터로부터 userName을 가져옵니다.
 
   if (!userName) {
     return res.status(400).send("userName이 필요합니다.");
@@ -435,7 +435,7 @@ app.post("/mybookmark", async (req, res) => {
       return res.status(404).send("사용자를 찾을 수 없습니다.");
     }
 
-    console.log("Update result:", user);
+    console.log("Update result:", userName);
 
     res.send("success");
   } catch (error) {
