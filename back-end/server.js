@@ -447,7 +447,7 @@ app.post("/mybookmark", async (req, res) => {
 });
 
 app.delete("/mybookmark/:id", async (req, res) => {
-  console.log(req.params.id);
+  console.log(req.params);
   try {
     const result = await bookmarksCollection.deleteOne({
       _id: new ObjectId(req.params.id),

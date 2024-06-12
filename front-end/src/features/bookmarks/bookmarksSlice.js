@@ -11,7 +11,7 @@ export const bookmarksSlice = createSlice({
     },
     removeBookmark: (state, action) => {
       state.items = state.items.filter(
-        (bookmark) => bookmark._id !== action.payload._id
+        (bookmark) => bookmark._id !== action.payload
       );
     },
     setBookmarks: (state, action) => {
