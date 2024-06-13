@@ -93,13 +93,8 @@ function Mobility() {
             readOnly
             value="127.02981939169952,37.514017465016785"
           />
-          <button
-            type="button"
-            className={`relative w-full cursor-pointer rounded-t border-b-[1px] p-2 text-left outline-none ${
-              isFocus === "origin"
-                ? "border-black border-2"
-                : "border-neutral-400"
-            }`}
+          <div
+            className={`relative w-full  rounded-t border-b-[1px] p-2 text-left outline-none `}
             onClick={() => handleFocus("origin")}
           >
             {!depart ? (
@@ -107,15 +102,13 @@ function Mobility() {
             ) : (
               depart
             )}
-          </button>
+            <span className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer bg-white">
+              x
+            </span>
+          </div>
           <input name="destination" hidden readOnly value="" />
-          <button
-            type="button"
-            className={`w-full cursor-pointer rounded-b p-2 text-left outline-none ${
-              isFocus === "destination"
-                ? "border-black border-2"
-                : "border-neutral-400"
-            }`}
+          <div
+            className={`w-full  rounded-b p-2 text-left outline-none`}
             onClick={() => handleFocus("destination")}
           >
             {!arrive ? (
@@ -123,7 +116,10 @@ function Mobility() {
             ) : (
               arrive
             )}
-          </button>
+            <span className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer bg-white">
+              x
+            </span>
+          </div>
         </div>
         <div className="flex justify-end">
           <button

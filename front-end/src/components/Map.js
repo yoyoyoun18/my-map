@@ -86,6 +86,7 @@ function Map() {
         dispatch(isDetail(true));
         dispatch(setSearchDetailInfo(response.data));
         dispatch(setCurrentDetailId(id));
+        navigate(`/detail/${id}`);
       })
       .catch((error) => {
         console.error("요청 에러:", error);
