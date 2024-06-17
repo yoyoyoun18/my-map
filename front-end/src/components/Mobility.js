@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setSearchRouteMode } from "../features/mobility/mobilitySlice";
+import {
+  isArrive,
+  isDepart,
+  setSearchRouteMode,
+} from "../features/mobility/mobilitySlice";
 import { setRoute } from "../features/route/routeSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -70,6 +74,14 @@ function Mobility() {
       });
   };
 
+  const clearDepart = () => {
+    dispatch(isDepart());
+  };
+
+  const clearArrive = () => {
+    dispatch(isArrive());
+  };
+
   return (
     <div
       className="p-4 overflow-y-auto bg-white w-80 relative z-50"
@@ -102,13 +114,16 @@ function Mobility() {
             ) : (
               depart
             )}
-            <span className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer bg-white">
+            <span
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer bg-white"
+              onClick={() => clearDepart()}
+            >
               x
             </span>
           </div>
           <input name="destination" hidden readOnly value="" />
           <div
-            className={`w-full  rounded-b p-2 text-left outline-none`}
+            className={`relative w-full  rounded-b p-2 text-left outline-none`}
             onClick={() => handleFocus("destination")}
           >
             {!arrive ? (
@@ -116,7 +131,13 @@ function Mobility() {
             ) : (
               arrive
             )}
-            <span className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer bg-white">
+            <span
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer bg-white"
+              onClick={(e) => {
+                e.stopPropagation(); // 부모 요소로 이벤트 버블링 방지
+                clearArrive();
+              }}
+            >
               x
             </span>
           </div>
