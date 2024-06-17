@@ -81,28 +81,51 @@ function Detail() {
     setNewReview({ ...newReview, [name]: value });
   };
 
-  const handleAddReview = () => {
-    console.log("Adding review:", user); // 로그 추가
-    if (newReview.name && newReview.comment) {
-      axios
-        .post("http://localhost:8080/review", newReview)
-        .then((response) => {
-          console.log("Review added successfully:", response); // 로그 추가
-          setReviews([
-            ...reviews,
-            {
-              id: currentDetailId,
-              name: newReview.name,
-              comment: newReview.comment,
-            },
-          ]);
-          setNewReview({ id: currentDetailId, name: user, comment: "" });
-        })
-        .catch((error) => {
-          console.error("There was an error saving the review", error);
-        });
-    } else {
-      toast.warn("댓글 내용을 작성해주세요!");
+  const fetchUserJoinDays = async (username) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/user/join-days/${username}`
+      );
+      console.log(response.data.daysSinceJoining); // 서버 응답 로그 출력
+      return response.data.daysSinceJoining;
+    } catch (error) {
+      console.error("Error fetching user join days:", error);
+      throw error;
+    }
+  };
+
+  const handleAddReview = async () => {
+    try {
+      const daysSinceJoining = await fetchUserJoinDays(user);
+
+      if (daysSinceJoining <= 10) {
+        // 10일 이하인 경우 경고 메시지 표시
+        toast.warn("가입한지 10일 이상의 유저만 작성할 수 있습니다.");
+        return; // 댓글 작성 중단
+      }
+
+      console.log("Adding review:", user); // 로그 추가
+      if (newReview.name && newReview.comment) {
+        const response = await axios.post(
+          "http://localhost:8080/review",
+          newReview
+        );
+        console.log("Review added successfully:", response); // 로그 추가
+
+        setReviews([
+          ...reviews,
+          {
+            id: currentDetailId,
+            name: newReview.name,
+            comment: newReview.comment,
+          },
+        ]);
+        setNewReview({ id: currentDetailId, name: user, comment: "" });
+      } else {
+        toast.warn("댓글 내용을 작성해주세요!");
+      }
+    } catch (error) {
+      console.error("There was an error saving the review", error);
     }
   };
 

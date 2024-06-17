@@ -79,6 +79,38 @@ client
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+app.get("/user/join-days/:username", async (req, res) => {
+  const { username } = req.params;
+
+  if (!username) {
+    return res.status(400).send("Username이 필요합니다.");
+  }
+
+  try {
+    const user = await userInfoCollection.findOne({ name: username });
+
+    if (!user) {
+      return res.status(404).send("사용자를 찾을 수 없습니다.");
+    }
+
+    const joinDate = user.createdAt;
+
+    if (!joinDate) {
+      return res.status(404).send("가입일 정보를 찾을 수 없습니다.");
+    }
+
+    const today = new Date();
+    const joinDateObj = new Date(joinDate);
+    const diffTime = Math.abs(today - joinDateObj);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // 밀리초를 일수로 변환
+
+    res.status(200).json({ daysSinceJoining: diffDays });
+  } catch (error) {
+    console.error("Error retrieving user join days:", error);
+    res.status(500).send("서버 오류");
+  }
+});
+
 app.post("/upload", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -283,10 +315,13 @@ app.post("/register/submit", upload.none(), async (req, res) => {
       return res.status(400).send("이미 존재하는 사용자 이메일입니다.");
     }
 
+    const createdAt = new Date();
+
     const response = await userInfoCollection.insertOne({
       name,
       email,
       password: hashedPassword,
+      createdAt,
       profileImageUrl, // 프로필 이미지 URL 저장
     });
     console.log("User inserted:", response);

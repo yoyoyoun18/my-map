@@ -12,7 +12,6 @@ import {
 } from "../features/search/searchSlice";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-
 function Map() {
   const dispatch = useDispatch();
   const route = useSelector((state) => state.route.route); // route 상태를 구독
@@ -206,13 +205,6 @@ function Map() {
     // 주소 검색을 먼저 시작
     geocoder.addressSearch(searchWord, addressSearchCallback);
   };
-
-  // useEffect(() => {
-  //   place = {
-  //     x: 0,
-  //     y: 0,
-  //   };
-  // }, [routeCount]);
 
   // 장소를 표시하는 함수
   const displayPlaces = (places) => {
