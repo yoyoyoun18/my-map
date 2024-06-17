@@ -138,7 +138,7 @@ function Detail() {
         X
       </button>
       <div
-        className="flex items-center justify-center h-48 bg-gray-200 bg-center bg-contain"
+        className="flex items-center justify-center h-48 bg-gray-200 bg-center bg-no-repeat bg-cover"
         style={{
           backgroundImage:
             searchDetailInfo &&
