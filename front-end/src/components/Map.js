@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  incrementSearchCount,
   isDetail,
   setCurrentDetailId,
   setIsAddressFalse,
@@ -77,6 +78,7 @@ function Map() {
 
   const handleSearchWord = (bookmarkWord) => {
     dispatch(setSearchWord(bookmarkWord));
+    dispatch(incrementSearchCount());
   };
 
   const testSearchResultId = (id) => {
