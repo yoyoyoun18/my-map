@@ -76,14 +76,18 @@ function MainComponent() {
   return (
     <div className="flex flex-row h-screen font-sans">
       <div
-        className="p-4 overflow-y-auto bg-gray-100 w-96 relative z-50"
+        className="overflow-y-auto bg-gray-100 w-96 relative z-50"
         style={{ flexShrink: 0 }}
       >
-        <Header />
-        <SearchBar />
-        {token && <MyInfo />}
-        {token && <BookMark />}
-        <SearchResult />
+        <div className="p-4 sticky top-0 left-0 w-full bg-gray-100">
+          <Header />
+          <SearchBar />
+          {token && <MyInfo />}
+          {token && <BookMark />}
+        </div>
+        <div className="p-4">
+          <SearchResult />
+        </div>
       </div>
       {detailPageState && location.pathname.startsWith("/detail") && <Detail />}
       {searchRouteMode &&

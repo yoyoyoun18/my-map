@@ -38,7 +38,7 @@ function Header() {
   };
 
   return (
-    <div className="flex justify-between items-center bg-gray-100 m-4">
+    <div className="flex justify-between items-center bg-gray-100 m-4 ">
       <h1
         className="text-6xl font-semibold font-bebas cursor-pointer"
         onClick={() => {
