@@ -50,6 +50,7 @@ function Map() {
   const [myLocationCount, setMyLocationCount] = useState(0);
   const [polyline, setPolyline] = useState(null);
   const navigate = useNavigate();
+  const routeCount = useSelector((state) => state.search.routeCount);
 
   useEffect(() => {
     // 브라우저에서 위치 접근 권한 요청
@@ -206,6 +207,13 @@ function Map() {
     geocoder.addressSearch(searchWord, addressSearchCallback);
   };
 
+  // useEffect(() => {
+  //   place = {
+  //     x: 0,
+  //     y: 0,
+  //   };
+  // }, [routeCount]);
+
   // 장소를 표시하는 함수
   const displayPlaces = (places) => {
     const newMarkers = places.map((place) => {
@@ -269,16 +277,16 @@ function Map() {
       const departMarker = new window.kakao.maps.Marker({
         map: map,
         position: new window.kakao.maps.LatLng(
-          currentDepartPlaceY,
-          currentDepartPlaceX
+          currentDepartPlaceX,
+          currentDepartPlaceY
         ),
       });
 
       const arriveMarker = new window.kakao.maps.Marker({
         map: map,
         position: new window.kakao.maps.LatLng(
-          currentArrivePlaceY,
-          currentArrivePlaceX
+          currentArrivePlaceX,
+          currentArrivePlaceY
         ),
       });
 

@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   isArrive,
   isDepart,
+  setRouteCount,
   setSearchRouteMode,
 } from "../features/mobility/mobilitySlice";
 import { setRoute } from "../features/route/routeSlice";
@@ -65,6 +66,7 @@ function Mobility() {
         } else {
           setError("경로 데이터를 찾을 수 없습니다.");
           dispatch(setRoute(null));
+          dispatch(setRouteCount());
         }
       })
       .catch((err) => {

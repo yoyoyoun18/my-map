@@ -4,6 +4,7 @@ const initialState = {
   arrive: null,
   depart: null,
   searchRouteMode: false,
+  routeCount: 0,
 };
 
 const mobilitySlice = createSlice({
@@ -19,8 +20,12 @@ const mobilitySlice = createSlice({
     setSearchRouteMode: (state, action) => {
       state.searchRouteMode = action.payload;
     },
+    setRouteCount: (state, action) => {
+      state.routeCount += 1;
+    },
   },
 });
 
-export const { isArrive, isDepart, setSearchRouteMode } = mobilitySlice.actions;
+export const { isArrive, isDepart, setSearchRouteMode, setRouteCount } =
+  mobilitySlice.actions;
 export default mobilitySlice.reducer;

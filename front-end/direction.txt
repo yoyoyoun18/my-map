@@ -148,6 +148,6 @@ fe, be
  - (해결)현재 접속중인 유저 currentUser db로 날먹 안될것같음 비교해서 유저인포중에 찾아야됨
  - (해결)길찾기 초기화 버튼 있으면 좋을 것 같음
  - (해결)detail img repaet 제거하고 꽉 채워보기 ?
- - header, myinfo 위치 fix
+ - (해결)header, myinfo 위치 fix
  - 길찾기 경로 출력시 출발지 도착지 핀 출력 안됨
  - mongoDB 종속성 공부
