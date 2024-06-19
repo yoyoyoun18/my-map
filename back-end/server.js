@@ -7,38 +7,32 @@ const { MongoClient, ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-
 const multer = require("multer");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const { Upload } = require("@aws-sdk/lib-storage");
 
 const app = express();
 
 const DB_URL = process.env.DB_URL;
 const SECRET_KEY = process.env.SECRET_KEY;
 const KAKAO_API_KEY = process.env.KAKAO_API_KEY;
+const ACCESS_KEY_ID = process.env.ACCESS_KEY_ID;
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY;
 
 const region = "ap-northeast-2";
 
 const s3 = new S3Client({
   region: region,
   credentials: {
-    accessKeyId: process.env.ACCESS_KEY_ID,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY,
+    accessKeyId: ACCESS_KEY_ID,
+    secretAccessKey: SECRET_ACCESS_KEY,
   },
 });
-const port = 8080;
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000", // React 애플리케이션의 출처
-//     credentials: true, // 쿠키를 허용하도록 설정
-//   })
-// );
+const port = 8080;
 
 app.use(
   cors({
-    origin: "http://192.168.20.146:3000", // React 애플리케이션의 주소
+    origin: "http://192.168.20.146:3000",
     credentials: true,
   })
 );
@@ -54,7 +48,7 @@ app.use(cookieParser());
 const client = new MongoClient(DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  tls: true, // 또는 ssl: true
+  tls: true,
 });
 
 let db;
@@ -66,18 +60,18 @@ let reviewCollection;
 client
   .connect()
   .then(() => {
-    console.log("DB연결성공");
+    console.log("DB 연결 성공");
     db = client.db("forum");
     bookmarksCollection = db.collection("bookmark");
     userInfoCollection = db.collection("userinfo");
-    currentUserCollection = db.collection("currnetuser");
+    currentUserCollection = db.collection("currentuser");
     reviewCollection = db.collection("review");
     app.listen(port, "0.0.0.0", () => {
       console.log(`Example app listening at http://0.0.0.0:${port}`);
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.error("MongoDB 연결 실패:", err);
   });
 
 const storage = multer.memoryStorage();
