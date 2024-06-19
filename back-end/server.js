@@ -51,7 +51,11 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(cookieParser());
 
-const client = new MongoClient(DB_URL);
+const client = new MongoClient(DB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  tls: true, // 또는 ssl: true
+});
 
 let db;
 let bookmarksCollection;
@@ -102,9 +106,33 @@ app.get("/user/join-days/:username", async (req, res) => {
     const today = new Date();
     const joinDateObj = new Date(joinDate);
     const diffTime = Math.abs(today - joinDateObj);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // 밀리초를 일수로 변환
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     res.status(200).json({ daysSinceJoining: diffDays });
+  } catch (error) {
+    console.error("Error retrieving user join days:", error);
+    res.status(500).send("서버 오류");
+  }
+});
+
+app.get("/user/commenttoken/:username", async (req, res) => {
+  const { username } = req.params;
+
+  if (!username) {
+    return res.status(400).send("Username이 필요합니다.");
+  }
+
+  try {
+    const user = await userInfoCollection.findOne(
+      { name: username },
+      { commentToken: 1 }
+    );
+
+    if (!user) {
+      return res.status(404).send("사용자를 찾을 수 없습니다.");
+    }
+
+    res.status(200).json({ commentToken: user.commentToken });
   } catch (error) {
     console.error("Error retrieving user join days:", error);
     res.status(500).send("서버 오류");

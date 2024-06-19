@@ -81,12 +81,27 @@ function Detail() {
     setNewReview({ ...newReview, [name]: value });
   };
 
+  // const fetchUserJoinDays = async (username) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:8080/user/commenttoken/${username}`
+  //     );
+  //     console.log(response.data.commentToken); // 서버 응답 로그 출력
+  //     return response.data.commentToken;
+  //   } catch (error) {
+  //     console.error("Error fetching user join days:", error);
+  //     throw error;
+  //   }
+  // };
+
   const fetchUserJoinDays = async (username) => {
     try {
       const response = await axios.get(
         `http://localhost:8080/user/join-days/${username}`
       );
-      console.log(response.data.daysSinceJoining); // 서버 응답 로그 출력
+      // console.log(response.data.commentToken);
+      // return response.data.commentToken;
+      console.log(response.data.daysSinceJoining);
       return response.data.daysSinceJoining;
     } catch (error) {
       console.error("Error fetching user join days:", error);
@@ -97,6 +112,13 @@ function Detail() {
   const handleAddReview = async () => {
     try {
       const daysSinceJoining = await fetchUserJoinDays(user);
+      console.log(daysSinceJoining);
+
+      // if (daysSinceJoining === false) {
+      //   // 10일 이하인 경우 경고 메시지 표시
+      //   toast.warn("가입한지 10일 이상의 유저만 작성할 수 있습니다.");
+      //   return; // 댓글 작성 중단
+      // }
 
       if (daysSinceJoining <= 10) {
         // 10일 이하인 경우 경고 메시지 표시
