@@ -96,23 +96,28 @@ function SearchResult() {
               </h4>
             </div>
             <p className="text-lg text-blue-500">{result.address_name}</p>
-            <div className="flex items-center space-x-2">
-              <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
-                도로명
-              </div>
-              <p className="text-xs text-gray-500">
-                {result.road_address.address_name}
-              </p>
-            </div>
+            {result.road_address && (
+              <div className="flex items-center space-x-2">
+                <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
+                  도로명
+                </div>
 
-            <div className="flex items-center space-x-2">
-              <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
-                우
+                <p className="text-xs text-gray-500">
+                  {result.road_address.address_name}
+                </p>
               </div>
-              <p className="text-xs text-gray-500">
-                {result.road_address.zone_no}
-              </p>
-            </div>
+            )}
+
+            {result.road_address && (
+              <div className="flex items-center space-x-2">
+                <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
+                  우
+                </div>
+                <p className="text-xs text-gray-500">
+                  {result.road_address.zone_no}
+                </p>
+              </div>
+            )}
           </div>
         ) : (
           <div
