@@ -1,96 +1,81 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
   isDetail,
   setCurrentDetailId,
-  setCurrentTargetPlace,
   setCurrentTargetPlaceX,
   setCurrentTargetPlaceY,
   setSearchDetailInfo,
 } from "../features/search/searchSlice";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function SearchResult() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const [currentURL, setCurrentURL] = useState("");
-  const [basicInfo, setBasicInfo] = useState({
-    basicInfo: {
-      placenamefull: null,
-    },
-  });
-  const detailPageState = useSelector((state) => state.search.detailPageState);
-  const searchDetailInfo = useSelector(
-    (state) => state.search.searchDetailInfo
-  );
   const searchResult = useSelector((state) => state.search.searchResult);
+  const [currentId, setCurrentId] = useState("");
 
-  const fetchDetailData = (id, x, y) => {
-    axios
-      .get(`http://localhost:8080/api/detail/${id}`)
-      .then((response) => {
-        dispatch(isDetail(true));
-        dispatch(setSearchDetailInfo(response.data));
-        dispatch(setCurrentDetailId(id));
-        dispatch(setCurrentTargetPlaceX(y));
-        dispatch(setCurrentTargetPlaceY(x));
-        navigate(`/detail/${id}`);
-        setCurrentURL(location);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("요청 에러:", error);
-      });
+  const fetchDetailData = async ({ queryKey }) => {
+    const [_, id, x, y] = queryKey;
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/detail/${id}`
+      );
+      const data = response.data;
+      return { data, x, y };
+    } catch (error) {
+      console.error("요청 에러:", error);
+      throw new Error("Failed to fetch detail data");
+    }
   };
 
-  const detailData = (address_name) => {
-    const data = {
-      basicInfo: {
-        placenamefull: address_name,
-      },
-    };
-    dispatch(isDetail(true));
-    navigate(`/detail/${address_name}`);
-    dispatch(setSearchDetailInfo(address_name));
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["detail", currentId?.[0], currentId?.[1], currentId?.[2]],
+    queryFn: fetchDetailData,
+    enabled: !!currentId, // currentId가 있을 때만 쿼리를 활성화
+  });
+
+  const dataHandler = (id, x, y) => {
+    setCurrentId([id, x, y]);
+    navigate(`/detail/${id}`);
   };
+
+  useEffect(() => {
+    if (data) {
+      dispatch(isDetail(true));
+      dispatch(setSearchDetailInfo(data.data));
+      dispatch(setCurrentDetailId(currentId[0]));
+      dispatch(setCurrentTargetPlaceX(currentId[2]));
+      dispatch(setCurrentTargetPlaceY(currentId[1]));
+      setCurrentURL(location);
+      console.log(data);
+    }
+  }, [data, dispatch, currentId, navigate, location]);
 
   useEffect(() => {
     if (location.pathname.startsWith("/detail")) {
       const id = location.pathname.split("/detail/")[1];
-      axios
-        .get(`http://localhost:8080/api/detail/${id}`)
-        .then((response) => {
-          dispatch(isDetail(true));
-          dispatch(setSearchDetailInfo(response.data));
-          dispatch(setCurrentDetailId(id));
-          setCurrentURL(location);
-        })
-        .catch((error) => {
-          console.error("요청 에러:", error);
-        });
+      setCurrentId([id, null, null]); // x, y 값을 null로 설정하여 currentId 업데이트
     }
-  }, [location, dispatch]);
+  }, [location]);
 
   return (
     <div className="space-y-2">
       {searchResult.map((result, i) =>
-        searchResult.length == 1 ? (
+        searchResult.length === 1 ? (
           <div
             key={i}
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
             onClick={() => {
               console.log(result);
-              detailData(result.address_name, result);
+              dataHandler(result.id, result.x, result.y);
             }}
           >
             <div className="flex items-center space-x-2">
-              {" "}
-              {/* 아이콘 */}
               <h4 className="font-semibold text-lg text-blue-800 align-middle">
                 {result.place_name}
               </h4>
@@ -101,13 +86,11 @@ function SearchResult() {
                 <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
                   도로명
                 </div>
-
                 <p className="text-xs text-gray-500">
                   {result.road_address.address_name}
                 </p>
               </div>
             )}
-
             {result.road_address && (
               <div className="flex items-center space-x-2">
                 <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
@@ -123,11 +106,9 @@ function SearchResult() {
           <div
             key={i}
             className="p-4 bg-white rounded-lg shadow-lg space-y-2 cursor-pointer"
-            // onClick={() => fetchDetailData(result.id, result.x, result.y)}
-            onClick={() => fetchDetailData(result.id, result.x, result.y)}
+            onClick={() => dataHandler(result.id, result.x, result.y)}
           >
             <h4 className=" text-lg text-blue-500">{result.place_name}</h4>
-
             <div className="flex items-center space-x-2">
               <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
                 주소
