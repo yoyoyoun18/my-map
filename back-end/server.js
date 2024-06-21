@@ -10,6 +10,7 @@ const cookieParser = require("cookie-parser");
 const multer = require("multer");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const sharp = require("sharp");
+const os = require("os");
 
 const app = express();
 
@@ -77,6 +78,28 @@ client
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
+function logSystemMetrics() {
+  const freeMemory = os.freemem();
+  const totalMemory = os.totalmem();
+  const usedMemory = totalMemory - freeMemory;
+  const memoryUsage = (usedMemory / totalMemory) * 100;
+
+  const cpus = os.cpus();
+  const cpuUsage =
+    cpus.reduce((acc, cpu) => {
+      const total = Object.values(cpu.times).reduce(
+        (total, type) => total + type,
+        0
+      );
+      return acc + (1 - cpu.times.idle / total);
+    }, 0) / cpus.length;
+
+  console.log(`Memory Usage: ${memoryUsage.toFixed(2)}%`);
+  console.log(`CPU Usage: ${(cpuUsage * 100).toFixed(2)}%`);
+}
+
+// 주기적으로 시스템 메트릭 로깅
 
 app.get("/user/join-days/:username", async (req, res) => {
   const { username } = req.params;
@@ -312,6 +335,8 @@ app.get("/", (req, res) => {
 
 app.get("/api/detail/:id", async (req, res) => {
   const { id } = req.params;
+  logSystemMetrics();
+
   try {
     const response = await axios.get(
       `https://place.map.kakao.com/main/v/${id}`
