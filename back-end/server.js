@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const sharp = require("sharp");
 
 const app = express();
 
@@ -133,20 +134,54 @@ app.get("/user/commenttoken/:username", async (req, res) => {
   }
 });
 
+// app.post("/upload", upload.single("image"), async (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).json({ error: "No file uploaded" });
+//   }
+
+//   const fileName = Date.now().toString() + path.extname(req.file.originalname);
+//   const params = {
+//     Bucket: "kimyoungjoforum1557",
+//     Key: fileName,
+//     Body: req.file.buffer,
+//     ContentType: req.file.mimetype,
+//   };
+
+//   try {
+//     await s3.send(new PutObjectCommand(params));
+//     const fileUrl = `https://${params.Bucket}.s3.${region}.amazonaws.com/${params.Key}`;
+//     res.json({
+//       message: "File uploaded successfully!",
+//       fileUrl: fileUrl,
+//     });
+//   } catch (error) {
+//     console.error("File upload failed:", error);
+//     res.status(500).json({ error: "Failed to upload file" });
+//   }
+// });
+
 app.post("/upload", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-  const fileName = Date.now().toString() + path.extname(req.file.originalname);
-  const params = {
-    Bucket: "kimyoungjoforum1557",
-    Key: fileName,
-    Body: req.file.buffer,
-    ContentType: req.file.mimetype,
-  };
-
   try {
+    const resizedImageBuffer = await sharp(req.file.buffer)
+      .resize(800, 800, {
+        fit: sharp.fit.inside,
+        withoutEnlargement: true,
+      })
+      .toBuffer();
+
+    const fileName =
+      Date.now().toString() + path.extname(req.file.originalname);
+    const params = {
+      Bucket: "kimyoungjoforum1557",
+      Key: fileName,
+      Body: resizedImageBuffer,
+      ContentType: req.file.mimetype,
+    };
+
     await s3.send(new PutObjectCommand(params));
     const fileUrl = `https://${params.Bucket}.s3.${region}.amazonaws.com/${params.Key}`;
     res.json({

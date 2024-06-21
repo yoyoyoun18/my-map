@@ -147,6 +147,7 @@ fe, be
  - s3에서 이미지 압축을 한 상태로 저장할 수 있는지 큰 파일 올려도 작아지게
  - react lazy 알아보기 이 과정
  - react query 캐싱 효과
+ - docker 이미지파일 크기 최적화
 
 
 9-1. react query 학습
