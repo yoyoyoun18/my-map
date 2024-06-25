@@ -41,7 +41,7 @@ function App() {
     const checkAuth = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.20.146:8080/check-auth",
+          "http://mymapapps.com/check-auth",
           {
             withCredentials: true,
           }
