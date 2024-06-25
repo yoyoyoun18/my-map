@@ -34,7 +34,7 @@ const port = 8080;
 
 app.use(
   cors({
-    origin: "http://192.168.20.146:3000",
+    origin: "https://d6uwx2unslb55.cloudfront.net", // CloudFront URL로 변경
     credentials: true,
   })
 );
@@ -467,7 +467,7 @@ app.post("/login", async (req, res) => {
     });
 
     // 로그인 성공 시 리다이렉션
-    res.redirect("http://192.168.20.146:3000/");
+    res.redirect("https://d6uwx2unslb55.cloudfront.net/");
   } catch (error) {
     console.error(error);
     res.status(500).send("로그인 처리 중 오류가 발생했습니다.");
