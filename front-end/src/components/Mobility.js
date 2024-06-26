@@ -54,7 +54,7 @@ function Mobility() {
         },
       })
       .then((response) => {
-        console.log("API 응답:", response);
+        // console.log("API 응답:", response);
         const routes = response.data.routes;
         if (routes && routes.length > 0 && routes[0].sections) {
           dispatch(setRoute(routes[0].sections[0].guides)); // 경로 데이터 설정
@@ -62,7 +62,7 @@ function Mobility() {
             `/detail/mobility/${currentDepartPlaceX}${currentDepartPlaceY}${currentArrivePlaceX}${currentArrivePlaceY}`
           );
           setError(null);
-          console.log(routes[0].sections[0].guides);
+          // console.log(routes[0].sections[0].guides);
         } else {
           setError("경로 데이터를 찾을 수 없습니다.");
           dispatch(setRoute(null));

@@ -25,6 +25,7 @@ function SearchResult() {
 
   const fetchDetailData = async ({ queryKey }) => {
     const [_, id, x, y] = queryKey;
+    console.log(process.env.REACT_APP_API_URL);
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/detail/${placeId}`
@@ -49,18 +50,17 @@ function SearchResult() {
     dispatch(setCurrentDetailId(id));
     dispatch(setCurrentTargetPlaceX(y));
     dispatch(setCurrentTargetPlaceY(x));
-    navigate(`/detail/${placeId}`);
+    navigate(`/detail/${id}`);
   };
 
   useEffect(() => {
     if (data) {
       dispatch(isDetail(true));
       dispatch(setSearchDetailInfo(data.data));
-      // dispatch(setCurrentDetailId(currentId[0]));
+      dispatch(setCurrentDetailId(currentId[0]));
       // dispatch(setCurrentTargetPlaceX(currentId[2]));
       // dispatch(setCurrentTargetPlaceY(currentId[1]));
       setCurrentURL(location);
-      console.log(data);
     }
   }, [data, dispatch, currentId, navigate, location, placeId]);
 

@@ -32,10 +32,22 @@ const s3 = new S3Client({
 
 const port = 8080;
 
+// app.use(
+//   cors({
+//     origin: "https://d6uwx2unslb55.cloudfront.net",
+//     // origin: "http://localhost:3000", // CloudFront URL로 변경
+//     credentials: true,
+//   })
+// );
+
+const allowedOrigins = [
+  "https://d6uwx2unslb55.cloudfront.net",
+  "http://localhost:3000",
+];
+
 app.use(
   cors({
-    // origin: "https://d6uwx2unslb55.cloudfront.net",
-    origin: "http://localhost:3000", // CloudFront URL로 변경
+    origin: allowedOrigins,
     credentials: true,
   })
 );
