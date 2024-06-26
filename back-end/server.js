@@ -34,7 +34,8 @@ const port = 8080;
 
 app.use(
   cors({
-    origin: "https://d6uwx2unslb55.cloudfront.net", // CloudFront URL로 변경
+    // origin: "https://d6uwx2unslb55.cloudfront.net",
+    origin: "http://localhost:3000", // CloudFront URL로 변경
     credentials: true,
   })
 );
@@ -333,13 +334,13 @@ app.get("/", (req, res) => {
   res.send(data);
 });
 
-app.get("/api/detail/:id", async (req, res) => {
-  const { id } = req.params;
+app.get("/api/detail/:placeId", async (req, res) => {
+  const { placeId } = req.params;
   logSystemMetrics();
 
   try {
     const response = await axios.get(
-      `https://place.map.kakao.com/main/v/${id}`
+      `https://place.map.kakao.com/main/v/${placeId}`
     );
     res.send(response.data);
   } catch (error) {

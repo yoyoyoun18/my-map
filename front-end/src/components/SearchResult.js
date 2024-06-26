@@ -18,12 +18,16 @@ function SearchResult() {
   const [currentURL, setCurrentURL] = useState("");
   const searchResult = useSelector((state) => state.search.searchResult);
   const [currentId, setCurrentId] = useState("");
+  const [placeId, setPlaceId] = useState("");
+  const currentTargetPlaceX = useSelector(
+    (state) => state.search.currentTargetPlaceX
+  );
 
   const fetchDetailData = async ({ queryKey }) => {
     const [_, id, x, y] = queryKey;
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/detail/${id}`
+        `${process.env.REACT_APP_API_URL}/api/detail/${placeId}`
       );
       const data = response.data;
       return { data, x, y };
@@ -41,20 +45,24 @@ function SearchResult() {
 
   const dataHandler = (id, x, y) => {
     setCurrentId([id, x, y]);
-    navigate(`/detail/${id}`);
+    setPlaceId(id);
+    dispatch(setCurrentDetailId(id));
+    dispatch(setCurrentTargetPlaceX(y));
+    dispatch(setCurrentTargetPlaceY(x));
+    navigate(`/detail/${placeId}`);
   };
 
   useEffect(() => {
     if (data) {
       dispatch(isDetail(true));
       dispatch(setSearchDetailInfo(data.data));
-      dispatch(setCurrentDetailId(currentId[0]));
-      dispatch(setCurrentTargetPlaceX(currentId[2]));
-      dispatch(setCurrentTargetPlaceY(currentId[1]));
+      // dispatch(setCurrentDetailId(currentId[0]));
+      // dispatch(setCurrentTargetPlaceX(currentId[2]));
+      // dispatch(setCurrentTargetPlaceY(currentId[1]));
       setCurrentURL(location);
       console.log(data);
     }
-  }, [data, dispatch, currentId, navigate, location]);
+  }, [data, dispatch, currentId, navigate, location, placeId]);
 
   useEffect(() => {
     if (location.pathname.startsWith("/detail")) {
