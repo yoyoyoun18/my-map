@@ -25,7 +25,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/list")
+      .get(`${process.env.REACT_APP_API_URL}/list`)
       .then((response) => {
         // 성공적으로 데이터를 받아오면 Redux 상태 업데이트
         dispatch(setBookmarks(response.data));
@@ -41,7 +41,7 @@ function App() {
     const checkAuth = async () => {
       try {
         const response = await axios.get(
-          "http://mymapapps.com/check-auth",
+          `${process.env.REACT_APP_API_URL}/check-auth`,
           {
             withCredentials: true,
           }

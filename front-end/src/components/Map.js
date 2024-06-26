@@ -83,7 +83,7 @@ function Map() {
 
   const testSearchResultId = (id) => {
     axios
-      .get(`http://localhost:8080/api/detail/${id}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/detail/${id}`)
       .then((response) => {
         dispatch(isDetail(true));
         dispatch(setSearchDetailInfo(response.data));

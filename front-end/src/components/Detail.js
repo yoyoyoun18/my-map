@@ -62,7 +62,7 @@ function Detail() {
   useEffect(() => {
     if (detailPageState) {
       axios
-        .get(`http://localhost:8080/reviews?id=${currentDetailId}`)
+        .get(`${process.env.REACT_APP_API_URL}/reviews?id=${currentDetailId}`)
         .then((response) => {
           setReviews(response.data);
         })
@@ -84,7 +84,7 @@ function Detail() {
   // const fetchUserJoinDays = async (username) => {
   //   try {
   //     const response = await axios.get(
-  //       `http://localhost:8080/user/commenttoken/${username}`
+  //       `${process.env.REACT_APP_API_URL}/user/commenttoken/${username}`
   //     );
   //     console.log(response.data.commentToken); // 서버 응답 로그 출력
   //     return response.data.commentToken;
@@ -97,7 +97,7 @@ function Detail() {
   const fetchUserJoinDays = async (username) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/user/join-days/${username}`
+        `${process.env.REACT_APP_API_URL}/user/join-days/${username}`
       );
       // console.log(response.data.commentToken);
       // return response.data.commentToken;
@@ -129,7 +129,7 @@ function Detail() {
       console.log("Adding review:", user); // 로그 추가
       if (newReview.name && newReview.comment) {
         const response = await axios.post(
-          "http://localhost:8080/review",
+          `${process.env.REACT_APP_API_URL}/review`,
           newReview
         );
         console.log("Review added successfully:", response); // 로그 추가

@@ -28,7 +28,7 @@ function BookMark() {
   useEffect(() => {
     if (token && myName) {
       axios
-        .get(`http://localhost:8080/mybookmarklist/${myName}`)
+        .get(`${process.env.REACT_APP_API_URL}/mybookmarklist/${myName}`)
         .then((response) => {
           dispatch(setBookmarks(response.data));
         })
@@ -49,7 +49,10 @@ function BookMark() {
     };
 
     axios
-      .post(`http://localhost:8080/mybookmark?userName=${myName}`, bookmarkData)
+      .post(
+        `${process.env.REACT_APP_API_URL}/mybookmark?userName=${myName}`,
+        bookmarkData
+      )
       .then((response) => {
         dispatch(addBookmark(bookmarkData));
         setBookmarkName(""); // 폼 필드 초기화
@@ -62,7 +65,7 @@ function BookMark() {
   };
 
   const handleDelete = (bookmarkId) => {
-    fetch(`http://localhost:8080/mybookmark/${bookmarkId}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/mybookmark/${bookmarkId}`, {
       method: "DELETE",
     })
       .then((response) => {

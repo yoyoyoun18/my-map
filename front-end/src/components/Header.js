@@ -15,7 +15,7 @@ function Header() {
     if (token) {
       try {
         await axios.post(
-          "http://mymapapps.com/logout",
+          `${process.env.REACT_APP_API_URL}/logout`,
           {},
           { withCredentials: true }
         );
@@ -26,7 +26,7 @@ function Header() {
       }
     } else {
       try {
-        window.location.href = "http://mymapapps.com/login";
+        window.location.href = `${process.env.REACT_APP_API_URL}/login`;
       } catch (error) {
         console.error("Login failed", error);
       }
