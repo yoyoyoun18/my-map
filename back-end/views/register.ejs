@@ -4,22 +4,103 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>회원가입</title>
-    <link href="/css/tailwind.css" rel="stylesheet" />
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #f7fafc;
+        font-family: "Roboto", sans-serif;
+      }
+      .container {
+        max-width: 24rem;
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .title {
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      .profile-image {
+        width: 6rem;
+        height: 6rem;
+        margin-bottom: 1rem;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 9999px;
+        background-position: center;
+        background-size: cover;
+        cursor: pointer;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #4a5568;
+      }
+      .form-group input {
+        display: block;
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #cbd5e0;
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        focus: border-indigo-500;
+      }
+      .file-input {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+      .submit-btn {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #ffffff;
+        background-color: #4c51bf;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .submit-btn:hover {
+        background-color: #434190;
+      }
+      .link {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.875rem;
+        color: #4c51bf;
+        text-decoration: none;
+      }
+      .link:hover {
+        color: #3c366b;
+      }
+    </style>
   </head>
-  <body
-    class="flex items-center justify-center min-h-screen bg-gray-100 font-roboto"
-  >
-    <div class="max-w-sm p-8 bg-white rounded-lg shadow-lg">
-      <h1 class="mb-6 text-2xl font-semibold text-center">회원가입</h1>
+  <body>
+    <div class="container">
+      <h1 class="title">회원가입</h1>
       <!-- 이미지 div 추가 -->
       <div
         id="profile-image"
-        class="w-24 h-24 mb-4 mx-auto rounded-full bg-center bg-cover cursor-pointer"
+        class="profile-image"
         style="
           background-image: url('https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/default.png');
         "
       ></div>
-      <input type="file" id="file-input" class="hidden" accept="image/*" />
+      <input type="file" id="file-input" class="file-input" accept="image/*" />
 
       <form
         id="register-form"
@@ -28,75 +109,52 @@
         method="POST"
       >
         <input type="hidden" id="profileImageUrl" name="profileImageUrl" />
-        <div>
-          <label
-            for="name"
-            class="block text-sm font-medium text-gray-700"
-          ></label>
+        <div class="form-group">
+          <label for="name">아이디 입력</label>
           <input
             type="text"
             id="name"
             name="name"
-            placeholder="아이디 입력"
-            class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            class="form-control"
             required
           />
         </div>
-        <div>
-          <label
-            for="email"
-            class="block text-sm font-medium text-gray-700"
-          ></label>
+        <div class="form-group">
+          <label for="email">이메일 주소</label>
           <input
             type="email"
             id="email"
             name="email"
-            placeholder="이메일 주소"
-            class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            class="form-control"
             required
           />
         </div>
-        <div>
-          <label
-            for="password"
-            class="block text-sm font-medium text-gray-700"
-          ></label>
+        <div class="form-group">
+          <label for="password">비밀번호</label>
           <input
             type="password"
             id="password"
             name="password"
-            placeholder="비밀번호"
-            class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            class="form-control"
             required
           />
         </div>
-        <div>
-          <label
-            for="confirmPassword"
-            class="block text-sm font-medium text-gray-700"
-          ></label>
+        <div class="form-group">
+          <label for="confirmPassword">비밀번호 재입력</label>
           <input
             type="password"
             id="confirmPassword"
             name="confirmPassword"
-            placeholder="비밀번호 재입력"
-            class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            class="form-control"
             required
           />
         </div>
         <div>
-          <button
-            type="submit"
-            class="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            회원가입
-          </button>
+          <button type="submit" class="submit-btn">회원가입</button>
         </div>
       </form>
-      <div class="mt-4 text-center">
-        <a href="/login" class="text-sm text-indigo-600 hover:text-indigo-800"
-          >이미 계정이 있으신가요? 로그인</a
-        >
+      <div class="link">
+        <a href="/login">이미 계정이 있으신가요? 로그인</a>
       </div>
     </div>
     <script src="/js/upload.js"></script>
