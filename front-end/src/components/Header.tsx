@@ -5,9 +5,10 @@ import { faSignInAlt, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { isToken } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../types";
 
 function Header() {
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state: RootState) => state.auth.token);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

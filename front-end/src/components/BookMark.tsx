@@ -9,19 +9,20 @@ import {
   setBookmarks,
 } from "../features/bookmarks/bookmarksSlice";
 import { setSearchWord } from "../features/search/searchSlice";
+import { RootState, Bookmark } from "../types";
 
-function BookMark() {
+const BookMark: React.FC = (): React.ReactElement => {
   const dispatch = useDispatch();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [bookmarkName, setBookmarkName] = useState("");
   const [bookmarkAddress, setBookmarkAddress] = useState("");
-  const bookmarks = useSelector((state) => state.bookmarks.items);
-  const searchWord = useSelector((state) => state.search.searchWord);
-  const token = useSelector((state) => state.auth.token);
-  const myName = useSelector((state) => state.auth.user);
+  const bookmarks = useSelector((state: RootState) => state.bookmarks.items);
+  const searchWord = useSelector((state: RootState) => state.search.searchWord);
+  const token = useSelector((state: RootState) => state.auth.token);
+  const myName = useSelector((state: RootState) => state.auth.user);
 
-  const handleSearchWord = (bookmarkWord) => {
+  const handleSearchWord = (bookmarkWord: string) => {
     dispatch(setSearchWord(bookmarkWord));
   };
 
@@ -36,14 +37,15 @@ function BookMark() {
           console.error("Error fetching bookmarks:", error);
         });
     } else {
-      dispatch(setBookmarks(""));
+      dispatch(setBookmarks([]));
     }
   }, [token, myName, dispatch]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
 
-    const bookmarkData = {
+    const bookmarkData: Bookmark = {
+      _id: "", // 실제 응답에서 가져와야 합니다.
       bookmark_name: bookmarkName,
       bookmark_address: bookmarkAddress,
     };
@@ -64,7 +66,7 @@ function BookMark() {
       });
   };
 
-  const handleDelete = (bookmarkId) => {
+  const handleDelete = (bookmarkId: string) => {
     fetch(`${process.env.REACT_APP_API_URL}/mybookmark/${bookmarkId}`, {
       method: "DELETE",
     })
@@ -102,9 +104,9 @@ function BookMark() {
       {/* 북마크 렌더링 */}
       {token &&
         bookmarks &&
-        bookmarks.map((bookmark, index) => (
+        bookmarks.map((bookmark) => (
           <div
-            key={index}
+            key={bookmark._id}
             id={`bookmark-${bookmark._id}`}
             className="relative flex items-center bg-white p-2 shadow rounded-lg cursor-pointer"
           >
@@ -141,9 +143,9 @@ function BookMark() {
                 즐겨찾기 추가
               </h3>
               <div className="flex flex-col flex-wrap space-y-2 lg:flex-row lg:gap-2 lg:space-y-0 p-4">
-                {bookmarks.map((bookmark, index) => (
+                {bookmarks.map((bookmark) => (
                   <div
-                    key={index}
+                    key={bookmark._id}
                     id={`bookmark-${bookmark._id}`}
                     className="relative flex items-center bg-gray-200 p-2 rounded-lg shadow-md"
                     style={{ width: "auto", height: "auto" }}
@@ -175,7 +177,9 @@ function BookMark() {
                 <input
                   type="text"
                   value={bookmarkName}
-                  onChange={(e) => setBookmarkName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setBookmarkName(e.target.value)
+                  }
                   placeholder="북마크 저장명을 입력해주세요"
                   className="block w-full px-4 py-2 text-lg text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
                   required
@@ -183,7 +187,9 @@ function BookMark() {
                 <input
                   type="text"
                   value={bookmarkAddress}
-                  onChange={(e) => setBookmarkAddress(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setBookmarkAddress(e.target.value)
+                  }
                   placeholder="주소를 입력해주세요"
                   className="block w-full px-4 py-2 text-lg text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
                   required
@@ -210,6 +216,6 @@ function BookMark() {
       )}
     </div>
   );
-}
+};
 
 export default BookMark;

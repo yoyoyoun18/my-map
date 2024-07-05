@@ -1,10 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AuthState } from "../../types";
 
-const initialState = {
-  user: null, // 사용자 정보를 저장
+const initialState: AuthState = {
+  user: null,
   email: null,
-  isLoggedIn: true, // 로그인 상태
-  token: false, // 인증 토큰
+  isLoggedIn: true,
+  token: false,
   picture: null,
 };
 
@@ -12,26 +13,26 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login: (state, action) => {
+    login: (state, action: PayloadAction<string>) => {
       state.user = action.payload;
       state.email = action.payload;
       state.isLoggedIn = true;
     },
     logout: (state) => {
       state.user = null;
-      state.token = null;
+      state.token = false;
       state.isLoggedIn = false;
     },
-    isToken: (state, action) => {
+    isToken: (state, action: PayloadAction<{ token: boolean }>) => {
       state.token = action.payload.token;
     },
-    isName: (state, action) => {
+    isName: (state, action: PayloadAction<string>) => {
       state.user = action.payload;
     },
-    isEmail: (state, action) => {
+    isEmail: (state, action: PayloadAction<string>) => {
       state.email = action.payload;
     },
-    isPicture: (state, action) => {
+    isPicture: (state, action: PayloadAction<string>) => {
       state.picture = action.payload;
     },
   },

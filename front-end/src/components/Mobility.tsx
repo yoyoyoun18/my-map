@@ -11,38 +11,48 @@ import { setRoute } from "../features/route/routeSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../types";
 
-function Mobility() {
+const Mobility: React.FC = () => {
   const [isFocus, setIsFocus] = useState(""); // 어떤 버튼이 포커스 되었는지 저장
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleFocus = (target) => {
+  const handleFocus = (target: string) => {
     setIsFocus(target); // 클릭된 버튼의 이름을 상태에 저장
   };
 
-  const arrive = useSelector((state) => state.mobility.arrive);
-  const depart = useSelector((state) => state.mobility.depart);
+  const arrive = useSelector((state: RootState) => state.mobility.arrive);
+  const depart = useSelector((state: RootState) => state.mobility.depart);
   const currentDepartPlaceX = useSelector(
-    (state) => state.search.currentDepartPlaceX
+    (state: RootState) => state.search.currentDepartPlaceX
   );
   const currentDepartPlaceY = useSelector(
-    (state) => state.search.currentDepartPlaceY
+    (state: RootState) => state.search.currentDepartPlaceY
   );
   const currentArrivePlaceX = useSelector(
-    (state) => state.search.currentArrivePlaceX
+    (state: RootState) => state.search.currentArrivePlaceX
   );
   const currentArrivePlaceY = useSelector(
-    (state) => state.search.currentArrivePlaceY
+    (state: RootState) => state.search.currentArrivePlaceY
   );
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const closeRouteMode = () => {
     dispatch(setSearchRouteMode(false));
   };
 
   const handleSearchRoute = () => {
-    // 여기서 axios를 사용하여 경로 검색 API를 호출합니다.
+    if (
+      currentDepartPlaceX === null ||
+      currentDepartPlaceY === null ||
+      currentArrivePlaceX === null ||
+      currentArrivePlaceY === null
+    ) {
+      toast.warn("출발지와 도착지 좌표를 설정해주세요.");
+      return;
+    }
+
     axios
       .get("https://apis-navi.kakaomobility.com/v1/directions", {
         params: {
@@ -54,7 +64,6 @@ function Mobility() {
         },
       })
       .then((response) => {
-        // console.log("API 응답:", response);
         const routes = response.data.routes;
         if (routes && routes.length > 0 && routes[0].sections) {
           dispatch(setRoute(routes[0].sections[0].guides)); // 경로 데이터 설정
@@ -62,7 +71,6 @@ function Mobility() {
             `/detail/mobility/${currentDepartPlaceX}${currentDepartPlaceY}${currentArrivePlaceX}${currentArrivePlaceY}`
           );
           setError(null);
-          // console.log(routes[0].sections[0].guides);
         } else {
           setError("경로 데이터를 찾을 수 없습니다.");
           dispatch(setRoute(null));
@@ -77,11 +85,11 @@ function Mobility() {
   };
 
   const clearDepart = () => {
-    dispatch(isDepart());
+    dispatch(isDepart(null));
   };
 
   const clearArrive = () => {
-    dispatch(isArrive());
+    dispatch(isArrive(null));
   };
 
   return (
@@ -135,7 +143,7 @@ function Mobility() {
             )}
             <span
               className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer bg-white"
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                 e.stopPropagation(); // 부모 요소로 이벤트 버블링 방지
                 clearArrive();
               }}
@@ -161,6 +169,6 @@ function Mobility() {
       <ToastContainer />
     </div>
   );
-}
+};
 
 export default Mobility;

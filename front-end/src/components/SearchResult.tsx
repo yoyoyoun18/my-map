@@ -10,25 +10,33 @@ import {
   setSearchDetailInfo,
 } from "../features/search/searchSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+import { RootState, SearchResult as SearchResultType } from "../types";
 
-function SearchResult() {
+const SearchResult: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentURL, setCurrentURL] = useState("");
-  const searchResult = useSelector((state) => state.search.searchResult);
-  const [currentId, setCurrentId] = useState("");
-  const [placeId, setPlaceId] = useState("");
+  const [currentURL, setCurrentURL] = useState<string>("");
+  const searchResult = useSelector(
+    (state: RootState) => state.search.searchResult
+  );
+  const [currentId, setCurrentId] = useState<
+    [string, string | null, string | null] | null
+  >(null);
+  const [placeId, setPlaceId] = useState<string>("");
   const currentTargetPlaceX = useSelector(
-    (state) => state.search.currentTargetPlaceX
+    (state: RootState) => state.search.currentTargetPlaceX
   );
 
-  const fetchDetailData = async ({ queryKey }) => {
+  const fetchDetailData = async ({
+    queryKey,
+  }: {
+    queryKey: (string | null)[];
+  }) => {
     const [_, id, x, y] = queryKey;
-    console.log(process.env.REACT_APP_API_URL);
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/detail/${placeId}`
+        `${process.env.REACT_APP_API_URL}/api/detail/${id}`
       );
       const data = response.data;
       return { data, x, y };
@@ -39,17 +47,22 @@ function SearchResult() {
   };
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["detail", currentId?.[0], currentId?.[1], currentId?.[2]],
+    queryKey: [
+      "detail",
+      currentId?.[0] ?? null,
+      currentId?.[1] ?? null,
+      currentId?.[2] ?? null,
+    ],
     queryFn: fetchDetailData,
     enabled: !!currentId, // currentId가 있을 때만 쿼리를 활성화
   });
 
-  const dataHandler = (id, x, y) => {
+  const dataHandler = (id: string, x: string, y: string) => {
     setCurrentId([id, x, y]);
     setPlaceId(id);
     dispatch(setCurrentDetailId(id));
-    dispatch(setCurrentTargetPlaceX(y));
-    dispatch(setCurrentTargetPlaceY(x));
+    dispatch(setCurrentTargetPlaceX(parseFloat(y)));
+    dispatch(setCurrentTargetPlaceY(parseFloat(x)));
     navigate(`/detail/${id}`);
   };
 
@@ -57,10 +70,8 @@ function SearchResult() {
     if (data) {
       dispatch(isDetail(true));
       dispatch(setSearchDetailInfo(data.data));
-      dispatch(setCurrentDetailId(currentId[0]));
-      // dispatch(setCurrentTargetPlaceX(currentId[2]));
-      // dispatch(setCurrentTargetPlaceY(currentId[1]));
-      setCurrentURL(location);
+      dispatch(setCurrentDetailId(currentId![0]));
+      setCurrentURL(location.pathname);
     }
   }, [data, dispatch, currentId, navigate, location, placeId]);
 
@@ -73,7 +84,7 @@ function SearchResult() {
 
   return (
     <div className="space-y-2">
-      {searchResult.map((result, i) =>
+      {searchResult.map((result: SearchResultType, i: number) =>
         searchResult.length === 1 ? (
           <div
             key={i}
@@ -123,7 +134,7 @@ function SearchResult() {
               </div>
               <p className="text-gray-500">{result.address_name}</p>
             </div>
-            {!result.phone == "" && (
+            {result.phone && result.phone !== "" && (
               <div className="flex items-center space-x-2">
                 <div className="text-xs text-gray-500 bg-white border rounded px-1 py-0.5">
                   전화번호
@@ -136,5 +147,6 @@ function SearchResult() {
       )}
     </div>
   );
-}
+};
+
 export default SearchResult;

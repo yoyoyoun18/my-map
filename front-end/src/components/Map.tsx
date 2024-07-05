@@ -4,63 +4,59 @@ import {
   incrementSearchCount,
   isDetail,
   setCurrentDetailId,
-  setIsAddressFalse,
-  setIsAddressTrue,
   setSearchDetailInfo,
   setSearchResult,
   setSearchWord,
 } from "../features/search/searchSlice";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-function Map() {
+import { RootState } from "../types";
+
+const Map: React.FC = () => {
   const dispatch = useDispatch();
-  const route = useSelector((state) => state.route.route); // route 상태를 구독
+  const route = useSelector((state: RootState) => state.route.route);
   const currentDepartPlaceX = useSelector(
-    (state) => state.search.currentDepartPlaceX
+    (state: RootState) => state.search.currentDepartPlaceX
   );
   const currentDepartPlaceY = useSelector(
-    (state) => state.search.currentDepartPlaceY
+    (state: RootState) => state.search.currentDepartPlaceY
   );
   const currentArrivePlaceX = useSelector(
-    (state) => state.search.currentArrivePlaceX
+    (state: RootState) => state.search.currentArrivePlaceX
   );
   const currentArrivePlaceY = useSelector(
-    (state) => state.search.currentArrivePlaceY
+    (state: RootState) => state.search.currentArrivePlaceY
   );
   const currentTargetPlaceX = useSelector(
-    (state) => state.search.currentTargetPlaceX
+    (state: RootState) => state.search.currentTargetPlaceX
   );
   const currentTargetPlaceY = useSelector(
-    (state) => state.search.currentTargetPlaceY
+    (state: RootState) => state.search.currentTargetPlaceY
   );
 
-  const searchWord = useSelector((state) => state.search.searchWord);
-  const searchCount = useSelector((state) => state.search.searchCount);
-  const isAddress = useSelector((state) => state.search.isAddress);
-  const searchResult = useSelector((state) => state.search.searchResult);
+  const searchWord = useSelector((state: RootState) => state.search.searchWord);
+  const searchCount = useSelector(
+    (state: RootState) => state.search.searchCount
+  );
+  const searchResult = useSelector(
+    (state: RootState) => state.search.searchResult
+  );
   const locations = ["편의점", "식당", "카페", "주차장", "마트"];
   const location = useLocation();
-  const [map, setMap] = useState(null);
-  const [keyword, setKeyword] = useState();
-  const [markers, setMarkers] = useState([]);
-  const [data, setData] = useState(null);
-  const [center, setCenter] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [myLocationCount, setMyLocationCount] = useState(0);
-  const [polyline, setPolyline] = useState(null);
+  const [map, setMap] = useState<kakao.maps.Map | null>(null);
+  const [markers, setMarkers] = useState<kakao.maps.Marker[]>([]);
+  const [center, setCenter] = useState<kakao.maps.LatLng | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [polyline, setPolyline] = useState<kakao.maps.Polyline | null>(null);
   const navigate = useNavigate();
-  const routeCount = useSelector((state) => state.search.routeCount);
 
   useEffect(() => {
-    // 브라우저에서 위치 접근 권한 요청
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // 위치 접근 성공 시
           initializeMap(position.coords.latitude, position.coords.longitude);
         },
         () => {
-          // 위치 접근 실패 시 기본 위치 사용 (서울시청)
           initializeMap(37.5662952, 126.9779451);
         },
         {
@@ -70,18 +66,17 @@ function Map() {
         }
       );
     } else {
-      // Geolocation이 지원되지 않는 경우
       alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.");
-      initializeMap(37.5662952, 126.9779451); // 기본 위치 설정
+      initializeMap(37.5662952, 126.9779451);
     }
   }, []);
 
-  const handleSearchWord = (bookmarkWord) => {
+  const handleSearchWord = (bookmarkWord: string) => {
     dispatch(setSearchWord(bookmarkWord));
     dispatch(incrementSearchCount());
   };
 
-  const testSearchResultId = (id) => {
+  const testSearchResultId = (id: string) => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/api/detail/${id}`)
       .then((response) => {
@@ -95,36 +90,35 @@ function Map() {
       });
   };
 
-  // 지도 초기화 함수
-  const initializeMap = (lat, lng) => {
+  const initializeMap = (lat: number, lng: number) => {
     const container = document.getElementById("map");
     const options = {
-      center: new window.kakao.maps.LatLng(lat, lng),
+      center: new kakao.maps.LatLng(lat, lng),
       level: 3,
     };
 
-    const createdMap = new window.kakao.maps.Map(container, options);
+    const createdMap = new kakao.maps.Map(container, options);
     setMap(createdMap);
   };
 
   useEffect(() => {
     if (map) {
       const handleCenterChange = () => {
-        const newCenter = map.getCenter();
-        setCenter({ lat: newCenter.getLat(), lng: newCenter.getLng() }); // 새로운 중심 좌표 객체를 상태로 저장
+        if (map) {
+          const newCenter = map.getCenter();
+          setCenter(newCenter);
+        }
       };
-      window.kakao.maps.event.addListener(
-        map,
-        "center_changed",
-        handleCenterChange
-      );
+      kakao.maps.event.addListener(map, "center_changed", handleCenterChange);
 
       return () => {
-        window.kakao.maps.event.removeListener(
-          map,
-          "center_changed",
-          handleCenterChange
-        );
+        if (map) {
+          kakao.maps.event.removeListener(
+            map,
+            "center_changed",
+            handleCenterChange
+          );
+        }
       };
     }
   }, [map]);
@@ -151,20 +145,19 @@ function Map() {
     setLoading(true);
     markers.forEach((marker) => marker.setMap(null));
     setMarkers([]);
-    let accumulatedResults = [];
+    let accumulatedResults: any[] = [];
 
     const searchOption = {
       location: map.getCenter(),
-      radius: 10000, // 예시로 1,000,000미터 설정
+      radius: 10000,
     };
 
-    const ps = new window.kakao.maps.services.Places();
-    const geocoder = new window.kakao.maps.services.Geocoder();
+    const ps = new kakao.maps.services.Places();
+    const geocoder = new kakao.maps.services.Geocoder();
 
     const mergeResults = () => {
       if (accumulatedResults.length > 0) {
         dispatch(setSearchResult(accumulatedResults));
-        setData(accumulatedResults);
         displayPlaces(accumulatedResults);
       } else {
         alert("검색 결과가 없습니다.");
@@ -172,21 +165,21 @@ function Map() {
       setLoading(false);
     };
 
-    const addressSearchCallback = (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
+    const addressSearchCallback = (result: any, status: any) => {
+      if (status === kakao.maps.services.Status.OK) {
         accumulatedResults = accumulatedResults.concat(result);
       }
-      // 키워드 검색 시작
-
       ps.keywordSearch(searchWord, keywordSearchCallback, searchOption);
     };
 
-    const keywordSearchCallback = (places, status, pagination) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const filteredPlaces = places.filter((place) =>
-          map
-            .getBounds()
-            .contain(new window.kakao.maps.LatLng(place.y, place.x))
+    const keywordSearchCallback = (
+      places: any,
+      status: any,
+      pagination: any
+    ) => {
+      if (status === kakao.maps.services.Status.OK) {
+        const filteredPlaces = places.filter((place: any) =>
+          map.getBounds().contain(new kakao.maps.LatLng(place.y, place.x))
         );
         accumulatedResults = accumulatedResults.concat(
           filteredPlaces.length > 0 ? filteredPlaces : places
@@ -202,58 +195,53 @@ function Map() {
       }
     };
 
-    // 주소 검색을 먼저 시작
     geocoder.addressSearch(searchWord, addressSearchCallback);
   };
 
-  // 장소를 표시하는 함수
-  const displayPlaces = (places) => {
-    const newMarkers = places.map((place) => {
-      const marker = new window.kakao.maps.Marker({
-        map: map,
-        position: new window.kakao.maps.LatLng(place.y, place.x),
+  const displayPlaces = (places: any[]) => {
+    const newMarkers = places.map((place: any) => {
+      const marker = new kakao.maps.Marker({
+        map: map!,
+        position: new kakao.maps.LatLng(place.y, place.x),
       });
-      const infowindow = new window.kakao.maps.InfoWindow({
+      const infowindow = new kakao.maps.InfoWindow({
         content: `<div style="padding:5px;font-size:12px;">${place.place_name}</div>`,
       });
 
-      window.kakao.maps.event.addListener(marker, "mouseover", () => {
-        infowindow.open(map, marker);
+      kakao.maps.event.addListener(marker, "mouseover", () => {
+        infowindow.open(map!, marker);
       });
 
-      window.kakao.maps.event.addListener(marker, "mouseout", () => {
+      kakao.maps.event.addListener(marker, "mouseout", () => {
         infowindow.close();
       });
 
-      window.kakao.maps.event.addListener(marker, "click", () => {
+      kakao.maps.event.addListener(marker, "click", () => {
         testSearchResultId(place.id);
       });
 
       return marker;
     });
 
-    setMarkers(newMarkers); // 여기서 마커 배열을 업데이트합니다.
+    setMarkers(newMarkers);
     if (places.length > 0) {
-      const newCenter = new window.kakao.maps.LatLng(places[0].y, places[0].x);
-      map.setCenter(newCenter);
+      const newCenter = new kakao.maps.LatLng(places[0].y, places[0].x);
+      map!.setCenter(newCenter);
     }
   };
 
-  // 경로 데이터를 받아 경로를 그리는 함수
   useEffect(() => {
     if (map && route) {
-      // 추가: 기존 폴리라인 제거
       if (polyline) {
         polyline.setMap(null);
       }
 
-      // 기존 마커를 모두 제거
       markers.forEach((marker) => marker.setMap(null));
 
       const linePath = route.map(
-        (point) => new window.kakao.maps.LatLng(point.y, point.x)
+        (point) => new kakao.maps.LatLng(point.y, point.x)
       );
-      const newPolyline = new window.kakao.maps.Polyline({
+      const newPolyline = new kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 5,
         strokeColor: "#FF0000",
@@ -262,52 +250,52 @@ function Map() {
       });
       newPolyline.setMap(map);
 
-      // 추가: 새로운 폴리라인 설정
       setPolyline(newPolyline);
 
-      // 출발지와 도착지 마커 생성
-      const departMarker = new window.kakao.maps.Marker({
-        map: map,
-        position: new window.kakao.maps.LatLng(
-          currentDepartPlaceX,
-          currentDepartPlaceY
+      const departMarker = new kakao.maps.Marker({
+        map: map!,
+        position: new kakao.maps.LatLng(
+          currentDepartPlaceX || 0,
+          currentDepartPlaceY || 0
         ),
       });
 
-      const arriveMarker = new window.kakao.maps.Marker({
-        map: map,
-        position: new window.kakao.maps.LatLng(
-          currentArrivePlaceX,
-          currentArrivePlaceY
+      const arriveMarker = new kakao.maps.Marker({
+        map: map!,
+        position: new kakao.maps.LatLng(
+          currentArrivePlaceX || 0,
+          currentArrivePlaceY || 0
         ),
       });
 
-      setMarkers([departMarker, arriveMarker]); // 출발지와 도착지 마커 배열로 설정
+      setMarkers([departMarker, arriveMarker]);
     }
   }, [map, route]);
 
   useEffect(() => {
     if (map && currentTargetPlaceX && currentTargetPlaceY) {
-      markers.forEach((marker) => marker.setMap(null)); // 기존 마커 제거
+      markers.forEach((marker) => marker.setMap(null));
 
-      const currentTargetMarker = new window.kakao.maps.Marker({
-        map: map,
-        position: new window.kakao.maps.LatLng(
-          currentTargetPlaceX,
-          currentTargetPlaceY
+      const currentTargetMarker = new kakao.maps.Marker({
+        map: map!,
+        position: new kakao.maps.LatLng(
+          currentTargetPlaceX || 0,
+          currentTargetPlaceY || 0
         ),
       });
 
-      setMarkers([currentTargetMarker]); // 새로운 마커 설정
+      setMarkers([currentTargetMarker]);
       map.setCenter(
-        new window.kakao.maps.LatLng(currentTargetPlaceX, currentTargetPlaceY)
+        new kakao.maps.LatLng(
+          currentTargetPlaceX || 0,
+          currentTargetPlaceY || 0
+        )
       );
     }
   }, [map, currentTargetPlaceX, currentTargetPlaceY]);
 
   return (
     <div className="relative h-full bg-gray-300">
-      {/* 상단 버튼 리스트 */}
       <div className="absolute top-0 left-0 p-4">
         <div className="flex flex-col space-y-2 lg:flex-row lg:space-x-2 lg:space-y-0">
           {locations.map((location, index) => (
@@ -321,10 +309,9 @@ function Map() {
           ))}
         </div>
       </div>
-      {/* 지도 표시 영역 */}
       <div id="map" className="absolute inset-x-0 top-0 bottom-0 pt-16"></div>
     </div>
   );
-}
+};
 
 export default Map;

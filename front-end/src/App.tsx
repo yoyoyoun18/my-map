@@ -16,22 +16,20 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
 import { isToken } from "./features/auth/authSlice";
-import { setSearchRouteMode } from "./features/mobility/mobilitySlice";
+import { RootState } from "./app/store";
 import Mobility from "./components/Mobility";
 
-function App() {
+const App: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/list`)
       .then((response) => {
-        // 성공적으로 데이터를 받아오면 Redux 상태 업데이트
         dispatch(setBookmarks(response.data));
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        // 에러 발생 시 빈 배열로 Redux 상태 설정
         dispatch(setBookmarks([]));
       });
   }, [dispatch]);
@@ -62,13 +60,15 @@ function App() {
       </Routes>
     </Router>
   );
-}
+};
 
-function MainComponent() {
-  const token = useSelector((state) => state.auth.token);
-  const detailPageState = useSelector((state) => state.search.detailPageState);
+const MainComponent: React.FC = () => {
+  const token = useSelector((state: RootState) => state.auth.token);
+  const detailPageState = useSelector(
+    (state: RootState) => state.search.detailPageState
+  );
   const searchRouteMode = useSelector(
-    (state) => state.mobility.searchRouteMode
+    (state: RootState) => state.mobility.searchRouteMode
   );
   const location = useLocation();
 
@@ -97,6 +97,6 @@ function MainComponent() {
       </div>
     </div>
   );
-}
+};
 
 export default App;

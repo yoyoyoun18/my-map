@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   isDetail,
-  setCurrentArrivePlace,
   setCurrentArrivePlaceX,
   setCurrentArrivePlaceY,
-  setCurrentDepartPlace,
   setCurrentDepartPlaceX,
   setCurrentDepartPlaceY,
 } from "../features/search/searchSlice";
@@ -18,40 +16,45 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@mui/material";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { RootState } from "../types";
 
-function Detail() {
+const Detail: React.FC = (): React.ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams(); // URL 파라미터에서 id 가져오기
+  const { id } = useParams<{ id: string }>(); // URL 파라미터에서 id 가져오기
   const searchDetailInfo = useSelector(
-    (state) => state.search.searchDetailInfo
+    (state: RootState) => state.search.searchDetailInfo
   );
-  const currentDetailId = useSelector((state) => state.search.currentDetailId);
-  const token = useSelector((state) => state.auth.token);
-  const user = useSelector((state) => state.auth.user);
-  const detailPageState = useSelector((state) => state.search.detailPageState);
+  const currentDetailId = useSelector(
+    (state: RootState) => state.search.currentDetailId
+  );
+  const token = useSelector((state: RootState) => state.auth.token);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const detailPageState = useSelector(
+    (state: RootState) => state.search.detailPageState
+  );
   const currentTargetPlaceX = useSelector(
-    (state) => state.search.currentTargetPlaceX
+    (state: RootState) => state.search.currentTargetPlaceX
   );
   const currentTargetPlaceY = useSelector(
-    (state) => state.search.currentTargetPlaceY
+    (state: RootState) => state.search.currentTargetPlaceY
   );
   const currentArrivePlaceX = useSelector(
-    (state) => state.search.currentArrivePlaceX
+    (state: RootState) => state.search.currentArrivePlaceX
   );
   const currentDepartPlaceX = useSelector(
-    (state) => state.search.currentDepartPlaceX
+    (state: RootState) => state.search.currentDepartPlaceX
   );
   const currentArrivePlaceY = useSelector(
-    (state) => state.search.currentArrivePlaceY
+    (state: RootState) => state.search.currentArrivePlaceY
   );
 
   const closeDetail = () => {
     dispatch(isDetail(false));
   };
 
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState<any[]>([]);
 
   const [newReview, setNewReview] = useState({
     id: currentDetailId,
@@ -76,31 +79,18 @@ function Detail() {
     setNewReview((prevState) => ({ ...prevState, id: currentDetailId }));
   }, [currentDetailId]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setNewReview({ ...newReview, [name]: value });
   };
 
-  // const fetchUserJoinDays = async (username) => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_API_URL}/user/commenttoken/${username}`
-  //     );
-  //     console.log(response.data.commentToken); // 서버 응답 로그 출력
-  //     return response.data.commentToken;
-  //   } catch (error) {
-  //     console.error("Error fetching user join days:", error);
-  //     throw error;
-  //   }
-  // };
-
-  const fetchUserJoinDays = async (username) => {
+  const fetchUserJoinDays = async (username: any) => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/user/join-days/${username}`
       );
-      // console.log(response.data.commentToken);
-      // return response.data.commentToken;
       console.log(response.data.daysSinceJoining);
       return response.data.daysSinceJoining;
     } catch (error) {
@@ -114,25 +104,18 @@ function Detail() {
       const daysSinceJoining = await fetchUserJoinDays(user);
       console.log(daysSinceJoining);
 
-      // if (daysSinceJoining === false) {
-      //   // 10일 이하인 경우 경고 메시지 표시
-      //   toast.warn("가입한지 10일 이상의 유저만 작성할 수 있습니다.");
-      //   return; // 댓글 작성 중단
-      // }
-
       if (daysSinceJoining <= 10) {
-        // 10일 이하인 경우 경고 메시지 표시
         toast.warn("가입한지 10일 이상의 유저만 작성할 수 있습니다.");
-        return; // 댓글 작성 중단
+        return;
       }
 
-      console.log("Adding review:", user); // 로그 추가
+      console.log("Adding review:", user);
       if (newReview.name && newReview.comment) {
         const response = await axios.post(
           `${process.env.REACT_APP_API_URL}/review`,
           newReview
         );
-        console.log("Review added successfully:", response); // 로그 추가
+        console.log("Review added successfully:", response);
 
         setReviews([
           ...reviews,
@@ -156,8 +139,8 @@ function Detail() {
       isDepart(searchDetailInfo?.basicInfo?.placenamefull ?? searchDetailInfo)
     );
     dispatch(setSearchRouteMode(true));
-    dispatch(setCurrentDepartPlaceX(currentTargetPlaceX));
-    dispatch(setCurrentDepartPlaceY(currentTargetPlaceY));
+    dispatch(setCurrentDepartPlaceX(currentTargetPlaceX!));
+    dispatch(setCurrentDepartPlaceY(currentTargetPlaceY!));
     navigate(`/detail/mobility`);
   };
 
@@ -166,8 +149,8 @@ function Detail() {
       isArrive(searchDetailInfo?.basicInfo?.placenamefull ?? searchDetailInfo)
     );
     dispatch(setSearchRouteMode(true));
-    dispatch(setCurrentArrivePlaceX(currentTargetPlaceX));
-    dispatch(setCurrentArrivePlaceY(currentTargetPlaceY));
+    dispatch(setCurrentArrivePlaceX(currentTargetPlaceX!));
+    dispatch(setCurrentArrivePlaceY(currentTargetPlaceY!));
     navigate(`/detail/mobility`);
   };
 
@@ -231,14 +214,6 @@ function Detail() {
           <div className="mb-4">
             <h2 className="text-lg font-semibold">후기 작성</h2>
             <div className="space-y-2">
-              <input
-                type="text"
-                name="name"
-                placeholder="이름"
-                value={newReview.name}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded hidden"
-              />
               <textarea
                 name="comment"
                 placeholder="후기"
@@ -264,6 +239,6 @@ function Detail() {
       <ToastContainer />
     </div>
   );
-}
+};
 
 export default Detail;

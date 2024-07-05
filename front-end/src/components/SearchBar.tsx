@@ -1,17 +1,16 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, KeyboardEvent, ChangeEvent } from "react";
+import { useDispatch } from "react-redux";
 import {
   setSearchWord,
   incrementSearchCount,
-  resetSearchCount,
 } from "../features/search/searchSlice";
 
-function SearchBar() {
+const SearchBar: React.FC = () => {
   const dispatch = useDispatch();
-  const [inputValue, setInputValue] = useState(""); // 입력 값을 로컬 상태로 관리합니다.
+  const [inputValue, setInputValue] = useState<string>(""); // 입력 값을 로컬 상태로 관리합니다.
 
   // 엔터 키를 감지하여 상태를 업데이트하는 함수
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       dispatch(setSearchWord(inputValue)); // 엔터 키를 눌렀을 때만 Redux 스토어의 상태를 업데이트합니다.
       dispatch(incrementSearchCount()); // searchCount를 1씩 증가시킵니다.
@@ -20,7 +19,7 @@ function SearchBar() {
   };
 
   // 입력 필드 값 변경 핸들러
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value); // 입력 필드의 값이 변경될 때마다 로컬 상태를 업데이트합니다.
   };
 
@@ -36,6 +35,6 @@ function SearchBar() {
       />
     </div>
   );
-}
+};
 
 export default SearchBar;

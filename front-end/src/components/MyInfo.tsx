@@ -2,17 +2,19 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isEmail, isName, isPicture } from "../features/auth/authSlice";
+import { RootState } from "../types";
 
-function MyInfo() {
-  const myName = useSelector((state) => state.auth.user);
-  const myEmail = useSelector((state) => state.auth.email);
-  const myPicture = useSelector((state) => state.auth.picture);
+const MyInfo: React.FC = () => {
+  const myName = useSelector((state: RootState) => state.auth.user);
+  const myEmail = useSelector((state: RootState) => state.auth.email);
+  const myPicture = useSelector((state: RootState) => state.auth.picture);
   const dispatch = useDispatch();
   const userInfo = {
     image: myPicture, // 사용자 이미지 URL
     nickname: myName,
     email: myEmail,
   };
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -55,6 +57,6 @@ function MyInfo() {
       </div>
     </div>
   );
-}
+};
 
 export default MyInfo;

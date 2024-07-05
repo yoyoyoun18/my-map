@@ -1,6 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { MobilityState } from "../../types";
 
-const initialState = {
+const initialState: MobilityState = {
   arrive: null,
   depart: null,
   searchRouteMode: false,
@@ -11,16 +12,16 @@ const mobilitySlice = createSlice({
   name: "mobility",
   initialState,
   reducers: {
-    isArrive: (state, action) => {
+    isArrive: (state, action: PayloadAction<string | null>) => {
       state.arrive = action.payload;
     },
-    isDepart: (state, action) => {
+    isDepart: (state, action: PayloadAction<string | null>) => {
       state.depart = action.payload;
     },
-    setSearchRouteMode: (state, action) => {
+    setSearchRouteMode: (state, action: PayloadAction<boolean>) => {
       state.searchRouteMode = action.payload;
     },
-    setRouteCount: (state, action) => {
+    setRouteCount: (state) => {
       state.routeCount += 1;
     },
   },
