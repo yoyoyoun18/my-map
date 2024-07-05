@@ -16,7 +16,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
 import { isToken } from "./features/auth/authSlice";
-import Login from "./components/Login";
 import { setSearchRouteMode } from "./features/mobility/mobilitySlice";
 import Mobility from "./components/Mobility";
 
