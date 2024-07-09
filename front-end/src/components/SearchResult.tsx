@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {
   isDetail,
@@ -16,6 +16,7 @@ const SearchResult: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const [currentURL, setCurrentURL] = useState<string>("");
   const searchResult = useSelector(
     (state: RootState) => state.search.searchResult
@@ -28,34 +29,43 @@ const SearchResult: React.FC = () => {
     (state: RootState) => state.search.currentTargetPlaceX
   );
 
-  const fetchDetailData = async ({
-    queryKey,
-  }: {
-    queryKey: (string | null)[];
-  }) => {
-    const [_, id, x, y] = queryKey;
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/detail/${id}`
-      );
-      const data = response.data;
-      return { data, x, y };
-    } catch (error) {
-      console.error("요청 에러:", error);
-      throw new Error("Failed to fetch detail data");
+  const fetchDetailData = async (id: any) => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/detail/${id}`
+    );
+    return response.data;
+  };
+
+  const fetchMultipleTimes = async (id: any) => {
+    const results = [];
+    for (let i = 0; i < 100; i++) {
+      results.push(fetchDetailData(id));
     }
+    return Promise.all(results);
   };
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: [
-      "detail",
-      currentId?.[0] ?? null,
-      currentId?.[1] ?? null,
-      currentId?.[2] ?? null,
-    ],
-    queryFn: fetchDetailData,
-    enabled: !!currentId, // currentId가 있을 때만 쿼리를 활성화
+    queryKey: ["detail", currentId?.[0] ?? null],
+    queryFn: () => fetchMultipleTimes(currentId?.[0]),
+    enabled: !!currentId,
+    staleTime: 1000 * 60 * 5,
   });
+
+  const sendMultipleRequests = async (id: string) => {
+    const requests = [];
+    for (let i = 0; i < 100; i++) {
+      requests.push(
+        axios.get(`${process.env.REACT_APP_API_URL}/api/detail/${id}`)
+      );
+    }
+
+    try {
+      await Promise.all(requests);
+      console.log("All requests completed");
+    } catch (error) {
+      console.error("Error with requests:", error);
+    }
+  };
 
   const dataHandler = (id: string, x: string, y: string) => {
     setCurrentId([id, x, y]);
@@ -64,15 +74,21 @@ const SearchResult: React.FC = () => {
     dispatch(setCurrentTargetPlaceX(parseFloat(y)));
     dispatch(setCurrentTargetPlaceY(parseFloat(x)));
     navigate(`/detail/${id}`);
+    sendMultipleRequests(id);
   };
 
   useEffect(() => {
     if (data) {
       dispatch(isDetail(true));
-      dispatch(setSearchDetailInfo(data.data));
+      dispatch(setSearchDetailInfo(data[0]));
       dispatch(setCurrentDetailId(currentId![0]));
       setCurrentURL(location.pathname);
     }
+    const cachedData = queryClient.getQueryData([
+      "detail",
+      currentId?.[0] ?? null,
+    ]);
+    console.log("Cached Data:", cachedData);
   }, [data, dispatch, currentId, navigate, location, placeId]);
 
   useEffect(() => {

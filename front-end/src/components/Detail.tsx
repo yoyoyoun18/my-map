@@ -22,7 +22,7 @@ import { RootState } from "../types";
 const Detail: React.FC = (): React.ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>(); // URL 파라미터에서 id 가져오기
+  const { id } = useParams<{ id: string }>();
   const searchDetailInfo = useSelector(
     (state: RootState) => state.search.searchDetailInfo
   );
@@ -101,15 +101,8 @@ const Detail: React.FC = (): React.ReactElement => {
 
   const handleAddReview = async () => {
     try {
-      const daysSinceJoining = await fetchUserJoinDays(user);
-      console.log(daysSinceJoining);
+      console.log("Adding review:", newReview); // 새로운 리뷰 상태 확인
 
-      if (daysSinceJoining <= 10) {
-        toast.warn("가입한지 10일 이상의 유저만 작성할 수 있습니다.");
-        return;
-      }
-
-      console.log("Adding review:", user);
       if (newReview.name && newReview.comment) {
         const response = await axios.post(
           `${process.env.REACT_APP_API_URL}/review`,

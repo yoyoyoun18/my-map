@@ -1,5 +1,6 @@
 import React, { useState, KeyboardEvent, ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
+import DOMPurify from "dompurify";
 import {
   setSearchWord,
   incrementSearchCount,
@@ -7,20 +8,19 @@ import {
 
 const SearchBar: React.FC = () => {
   const dispatch = useDispatch();
-  const [inputValue, setInputValue] = useState<string>(""); // 입력 값을 로컬 상태로 관리합니다.
+  const [inputValue, setInputValue] = useState<string>("");
 
-  // 엔터 키를 감지하여 상태를 업데이트하는 함수
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      dispatch(setSearchWord(inputValue)); // 엔터 키를 눌렀을 때만 Redux 스토어의 상태를 업데이트합니다.
-      dispatch(incrementSearchCount()); // searchCount를 1씩 증가시킵니다.
-      event.preventDefault(); // 엔터 키의 기본 이벤트를 방지합니다.
+      const sanitizedInput = DOMPurify.sanitize(inputValue);
+      dispatch(setSearchWord(sanitizedInput));
+      dispatch(incrementSearchCount());
+      event.preventDefault();
     }
   };
 
-  // 입력 필드 값 변경 핸들러
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value); // 입력 필드의 값이 변경될 때마다 로컬 상태를 업데이트합니다.
+    setInputValue(event.target.value);
   };
 
   return (

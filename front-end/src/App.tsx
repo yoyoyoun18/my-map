@@ -1,11 +1,5 @@
 import React, { useEffect } from "react";
-import Detail from "./components/Detail";
-import Header from "./components/Header";
-import Map from "./components/Map";
-import MyInfo from "./components/MyInfo";
-import SearchBar from "./components/SearchBar";
-import SearchResult from "./components/SearchResult";
-import BookMark from "./components/BookMark";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import {
   BrowserRouter as Router,
@@ -13,26 +7,19 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setBookmarks } from "./features/bookmarks/bookmarksSlice";
 import { isToken } from "./features/auth/authSlice";
 import { RootState } from "./app/store";
+import Detail from "./components/Detail";
+import Header from "./components/Header";
+import Map from "./components/Map";
+import MyInfo from "./components/MyInfo";
+import SearchBar from "./components/SearchBar";
+import SearchResult from "./components/SearchResult";
+import BookMark from "./components/BookMark";
 import Mobility from "./components/Mobility";
 
-const App: React.FC = () => {
+const App = () => {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/list`)
-      .then((response) => {
-        dispatch(setBookmarks(response.data));
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        dispatch(setBookmarks([]));
-      });
-  }, [dispatch]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -40,10 +27,16 @@ const App: React.FC = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/check-auth`,
           {
-            withCredentials: true,
+            withCredentials: true, // HttpOnly 쿠키를 포함한 요청
           }
         );
-        dispatch(isToken({ token: response.data.authenticated }));
+        if (response.data.authenticated) {
+          dispatch(isToken({ token: true }));
+          // 필요한 경우 사용자 정보를 저장할 수 있습니다.
+          // dispatch(setUser(response.data.user));
+        } else {
+          dispatch(isToken({ token: false }));
+        }
       } catch (error) {
         dispatch(isToken({ token: false }));
         console.error("Error checking authentication:", error);
@@ -62,7 +55,7 @@ const App: React.FC = () => {
   );
 };
 
-const MainComponent: React.FC = () => {
+const MainComponent = () => {
   const token = useSelector((state: RootState) => state.auth.token);
   const detailPageState = useSelector(
     (state: RootState) => state.search.detailPageState

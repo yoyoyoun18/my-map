@@ -108,8 +108,32 @@ function logSystemMetrics() {
       return acc + (1 - cpu.times.idle / total);
     }, 0) / cpus.length;
 
-  console.log(`Memory Usage: ${memoryUsage.toFixed(2)}%`);
-  console.log(`CPU Usage: ${(cpuUsage * 100).toFixed(2)}%`);
+  return {
+    memoryUsage: memoryUsage.toFixed(2),
+    cpuUsage: (cpuUsage * 100).toFixed(2),
+  };
+}
+
+function logMemoryUsage() {
+  const freeMemory = os.freemem();
+  const totalMemory = os.totalmem();
+  const usedMemory = totalMemory - freeMemory;
+  const memoryUsage = (usedMemory / totalMemory) * 100;
+  return memoryUsage;
+}
+
+let memoryUsages = [];
+
+async function measureMemoryUsage() {
+  const memoryUsage = logMemoryUsage();
+  memoryUsages.push(memoryUsage);
+
+  if (memoryUsages.length >= 100) {
+    const averageMemoryUsage =
+      memoryUsages.reduce((acc, usage) => acc + usage, 0) / memoryUsages.length;
+    console.log(`Average Memory Usage: ${averageMemoryUsage.toFixed(2)}%`);
+    memoryUsages = []; // 배열 초기화
+  }
 }
 
 // 주기적으로 시스템 메트릭 로깅
@@ -348,8 +372,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/detail/:placeId", async (req, res) => {
   const { placeId } = req.params;
-  logSystemMetrics();
-
+  measureMemoryUsage();
   try {
     const response = await axios.get(
       `https://place.map.kakao.com/main/v/${placeId}`
@@ -480,7 +503,8 @@ app.post("/login", async (req, res) => {
     });
 
     // 로그인 성공 시 리다이렉션
-    res.redirect("https://d6uwx2unslb55.cloudfront.net/");
+    // res.redirect("https://d6uwx2unslb55.cloudfront.net/");
+    res.redirect("http://localhost:3000/");
   } catch (error) {
     console.error(error);
     res.status(500).send("로그인 처리 중 오류가 발생했습니다.");
@@ -499,17 +523,18 @@ function authenticateJWT(req, res, next) {
   if (token) {
     jwt.verify(token, SECRET_KEY, (err, user) => {
       if (err) {
-        return res.sendStatus(403);
+        return res.sendStatus(403); // 유효하지 않은 토큰인 경우
       }
 
-      req.user = user;
+      req.user = user; // 사용자 정보를 요청 객체에 추가
       next();
     });
   } else {
-    res.sendStatus(401);
+    res.sendStatus(401); // 토큰이 없는 경우
   }
 }
 
+// 인증 상태 확인 엔드포인트
 app.get("/check-auth", (req, res) => {
   const token = req.cookies.token;
   if (token) {
