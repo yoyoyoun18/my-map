@@ -27,7 +27,7 @@ kakao api를 이용하여 지도 검색 서비스를 구현
 
 ---
 
-[!architecture](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-archi.png)
+![architecture](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-archi.png)
 
 
 ### 실행
@@ -54,11 +54,11 @@ npm start
 ---
 
 1. Tanstack Query를 이용한 api 콜 수 최적화
-[!캐싱](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content02.png)
+![캐싱](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content02.png)
 
 2. 권한 로직 개선
-[!로직개선1](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content03.png)
-[!로직개선2](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content04.png)
+![로직개선1](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content03.png)
+![로직개선2](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content04.png)
 
 ### 개선사항, 아쉬운 점
 
