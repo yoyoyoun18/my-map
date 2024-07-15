@@ -64,7 +64,7 @@ npm start
 
 ![로직개선2](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content04.png)
 
-### 개선사항, 아쉬운 점
+### 앞으로의 개선 사항
 
 ---
 
