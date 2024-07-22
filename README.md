@@ -64,6 +64,11 @@ npm start
 
 ![로직개선2](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content04.png)
 
+3. CSR, SSR의 특징을 활용한 로딩 속도 개선
+
+![로딩속도개선1](https://kimyoungjoforum1557.s3.ap-northeast-2.amazonaws.com/my-map-content05.png)
+
+
 ### 앞으로의 개선 사항
 
 ---
